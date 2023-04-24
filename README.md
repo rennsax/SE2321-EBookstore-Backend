@@ -40,15 +40,7 @@
     passwd: string;
   }
   ```
-
-  登录状态返回为 JSON 对象，实现接口：
-
-  ```typescript
-  // TODO 应该使用 status code 表示
-  interface SuccessInfo {
-    flag: boolean;
-  }
-  ```
+  返回两种 status code: 204 (No Content) or 401 (Unauthorized)。
 
 ### 用户信息 `/user`
 
@@ -97,7 +89,7 @@ TODO
   ```typescript
   interface OrderInfo {
     readonly id: number; // 订单主键
-    readonly date: Date; // 订单时间戳
+    readonly time: Date; // 订单时间戳, Java 中为 java.sql.Timestamp
     readonly bookOrderedList: BookOrdered[];
   }
 

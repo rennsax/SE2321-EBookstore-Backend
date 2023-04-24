@@ -1,5 +1,7 @@
 package com.sjtu.rbj.bookstore.service;
 
+import java.util.NoSuchElementException;
+
 import com.sjtu.rbj.bookstore.data.UserInfo;
 
 /**
@@ -7,18 +9,19 @@ import com.sjtu.rbj.bookstore.data.UserInfo;
  * @date 2023/04/18
  */
 public interface UserService {
-    boolean enableLogin(String account, String passwd);
     /**
-     * get necessary information by user's id
-     * @param userId user's PK
-     * @return UserInfo {userId, orderId}
+     * verify account and password
+     * @param account
+     * @param passwd
+     * @return {@code true} on success
      */
-    /**UserInfo getUserInfoById(Integer userId);*/
+    boolean enableLogin(String account, String passwd);
 
     /**
      * get necessary information by user's account
      * @param account user's account, unique
      * @return UserInfo {userId, orderId}
+     * @throws NoSuchElementException if no such user
      */
     UserInfo getUserInfoByAccount(String account);
 }

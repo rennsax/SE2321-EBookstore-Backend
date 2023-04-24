@@ -21,17 +21,23 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private BookDao bookDao;
 
-    public List<Book> listBooks(Integer x) {
-        x = Math.max(x, 1);
-        x = Math.min(20, x);
-        return bookDao.findTopX(x);
+
+    @Override
+    public Optional<Book> getBookByUuid(UUID uuid) {
+        return bookDao.findByUuid(uuid);
     }
 
-    public Optional<Book> getBookByUuid(UUID uuid) {
-        List<Book> res = bookDao.findByUuid(uuid);
-        if (res.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(res.get(0));
+    @Override
+    public List<Book> getBookListForHomePage(Integer limit) {
+        return this.getBookListForHomePage(limit, 0);
     }
+
+    @Override
+    public List<Book> getBookListForHomePage(Integer limit, Integer offset) {
+        /** resize limit */
+        limit = Math.max(limit, 1);
+        limit = Math.min(20, limit);
+        return bookDao.findWithLimitWithOffset(limit, offset);
+    }
+
 }

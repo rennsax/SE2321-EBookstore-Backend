@@ -1,6 +1,7 @@
 package com.sjtu.rbj.bookstore.dao;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.sjtu.rbj.bookstore.entity.Book;
@@ -10,12 +11,19 @@ import com.sjtu.rbj.bookstore.entity.Book;
  * @date 2023/04/19
  */
 public interface BookDao {
+
     /**
-     * find the default first {@code x} books
-     * @param x the number of book to query for
+     * from mysql database, get book data with limit and offset
+     * @param limit
+     * @param offset
+     * @return {@code List<Book>}
+     */
+    List<Book> findWithLimitWithOffset(Integer limit, Integer offset);
+
+    /**
+     * get book information by uuid
+     * @param uuid the uuid of queried book
      * @return
      */
-    List<Book> findTopX(Integer x);
-
-    List<Book> findByUuid(UUID uuid);
+    Optional<Book> findByUuid(UUID uuid);
 }

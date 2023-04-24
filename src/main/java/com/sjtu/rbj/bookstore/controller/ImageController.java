@@ -23,7 +23,7 @@ import com.sjtu.rbj.bookstore.constant.Constant;
 public class ImageController {
     @CrossOrigin(Constant.ALLOW_ORIGIN)
     @GetMapping(value = "/images/{picName}", produces = MediaType.IMAGE_JPEG_VALUE)
-    @Cacheable("images")
+    @Cacheable("images") /** provide a cacheable static source handler */
     public byte[] images(@PathVariable String picName) throws IOException {
         ClassPathResource imgFile = new ClassPathResource(Constant.IMAGES_FOLDER + picName);
         InputStream in = imgFile.getInputStream();

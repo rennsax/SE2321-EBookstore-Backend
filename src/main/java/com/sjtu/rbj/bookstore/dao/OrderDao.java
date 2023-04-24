@@ -11,9 +11,10 @@ import com.sjtu.rbj.bookstore.entity.Order;
 public interface OrderDao {
     /**
      * save an entity to the database
-     * @param <S>
      * @param entity
-     * @return
+     * @return the saved entity
+     * @throws IllegalArgumentException
+     * @throws OptimisticLockingFailureException
      */
     <S extends Order> S save(S entity);
 

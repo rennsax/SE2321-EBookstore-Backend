@@ -31,19 +31,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean enableLogin(String account, String passwd) {
-        if (userDao.findByAccountAndPasswd(account, passwd).isEmpty()) {
-            return false;
-        }
-        return true;
+        return userDao.findByAccountAndPasswd(account, passwd).isPresent();
     }
 
     @Override
     public UserInfo getUserInfoByAccount(String account) {
         Optional<User> userRes = userDao.findByAccount(account);
-        if (!userRes.isPresent()) {
-            throw new NoSuchElementException("No such user with account" + account);
-        }
-        User user = userRes.get();
+        User user = userRes.orElseThrow(() -> new NoSuchElementException("Cannot find such account!"));
         return this.getUserInfoById(user.getId());
     }
 

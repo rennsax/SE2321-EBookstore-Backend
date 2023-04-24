@@ -14,7 +14,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     /**
      * find all orders belonging to the user
      * @param userId
-     * @return
+     * @return {@code List<Order>}
      */
     List<Order> findByUserId(Integer userId);
 }

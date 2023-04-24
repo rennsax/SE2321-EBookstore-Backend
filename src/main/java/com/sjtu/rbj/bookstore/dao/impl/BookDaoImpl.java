@@ -1,6 +1,7 @@
 package com.sjtu.rbj.bookstore.dao.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,13 @@ public class BookDaoImpl implements BookDao {
     private BookRepository bookRepository;
 
     @Override
-    public List<Book> findTopX(Integer x) {
-        return bookRepository.findTopX(x);
+    public Optional<Book> findByUuid(UUID uuid) {
+        return bookRepository.findByUuid(uuid);
     }
 
     @Override
-    public List<Book> findByUuid(UUID uuid) {
-        return bookRepository.findByUuid(uuid);
+    public List<Book> findWithLimitWithOffset(Integer limit, Integer offset) {
+        return bookRepository.findWithLimitWithOffset(limit, offset);
     }
+
 }

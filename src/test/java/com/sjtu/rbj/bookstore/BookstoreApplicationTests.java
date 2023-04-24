@@ -2,6 +2,8 @@ package com.sjtu.rbj.bookstore;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.dao.UserDao;
 import com.sjtu.rbj.bookstore.data.UserInfo;
+import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.entity.Order;
 import com.sjtu.rbj.bookstore.entity.OrderItem;
 import com.sjtu.rbj.bookstore.entity.User;
@@ -57,6 +60,13 @@ class BookstoreApplicationTests {
 
     @Test
     void testBookRepository() {
+        /** BEGIN insert book */
+        Book book = new Book();
+        book.setTitle("~test book~");
+        assertNull(book.getUuid());
+        bookRepository.save(book);
+        assertNotNull(book.getUuid());
+        /** END insert book */
     }
 
     @Test
@@ -68,7 +78,7 @@ class BookstoreApplicationTests {
     @Test
     void testOrderDao() {
         List<Order> res = orderDao.findByUserId(2);
-        System.out.println(res.toString());
+        System.out.println(res.get(0).getTime());
     }
 
     @Test

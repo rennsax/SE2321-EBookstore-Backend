@@ -11,5 +11,10 @@ import com.sjtu.rbj.bookstore.entity.OrderItem;
  * @data 2023/04/23
  */
 public interface OrderItemRepository extends JpaRepository<OrderItem, Integer> {
+    /**
+     * find all ordered items of the order
+     * @param orderId
+     * @return {@code List<OrderItem>}
+     */
     List<OrderItem> findByOrderId(Integer orderId);
 }

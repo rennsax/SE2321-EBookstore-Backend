@@ -1,6 +1,5 @@
 package com.sjtu.rbj.bookstore.dao;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.sjtu.rbj.bookstore.entity.User;
@@ -11,18 +10,16 @@ import com.sjtu.rbj.bookstore.entity.User;
  */
 public interface UserDao {
     /**
-     * find a user by account
-     *
-     * @param account
-     * @return if exist, the user entity is presented.
+     * find user by account
+     * @param account the user's account
+     * @return {@code Optional<User>}
      */
     Optional<User> findByAccount(String account);
     /**
      * find a user by account and password, used to verify authority
-     *
      * @param account
      * @param passwd
-     * @return List of User
+     * @return {@code Optional<User>}
      */
-    List<User> findByAccountAndPasswd(String account, String passwd);
+    Optional<User> findByAccountAndPasswd(String account, String passwd);
 }

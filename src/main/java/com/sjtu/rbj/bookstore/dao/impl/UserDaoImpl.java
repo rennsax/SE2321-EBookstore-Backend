@@ -1,7 +1,5 @@
 package com.sjtu.rbj.bookstore.dao.impl;
 
-import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> findByAccountAndPasswd(String account, String passwd) {
+    public Optional<User> findByAccountAndPasswd(String account, String passwd) {
         return repository.findByAccountAndPasswd(account, passwd);
     }
 }
