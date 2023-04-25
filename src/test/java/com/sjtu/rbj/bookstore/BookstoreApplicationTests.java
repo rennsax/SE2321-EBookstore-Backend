@@ -8,8 +8,12 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.sjtu.rbj.bookstore.constant.OrderStatus;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.dao.UserDao;
 import com.sjtu.rbj.bookstore.data.UserInfo;
@@ -106,15 +110,72 @@ class BookstoreApplicationTests {
     @Test
     void testUserRepository() {
         Order order = new Order();
-        order.setUserId(1);
         System.out.println(order.toString());
         orderRepository.save(order);
         System.out.println(order.toString());
     }
 
     @Test
-    void testTableAssociation() {
-        System.out.println(1);
+    @Rollback(false)
+    void initializeDatabase() {
+        /** insert some relations */
+        User user = new User();
+        user.setUserAccount(new UserAccount("cauchy", "123"));
+        userRepository.save(user);
+        Order order1 = new Order();
+        order1.setUser(user);
+        Order order2 = new Order();
+        order2.setStatus(OrderStatus.PENDING);
+        order2.setUser(user);
+        orderRepository.save(order1);
+        orderRepository.save(order2);
     }
 
+    @Test
+    @Transactional
+    @Rollback(false)
+    void testUserOwnOrders() {
+        User user = userRepository.findById(1).get();
+        System.out.println(user);
+        user.removeOrder(user.getOrderList().get(0));
+        System.out.println(user);
+    }
+
+}
+
+@DataJpaTest
+class DataTest {
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    BookRepository bookRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
+
+    void initializeDatabase() {
+        /** insert some relations */
+        User user = new User();
+        user.setUserAccount(new UserAccount("cauchy", "123"));
+        userRepository.save(user);
+        Order order1 = new Order();
+        order1.setUser(user);
+        Order order2 = new Order();
+        order2.setStatus(OrderStatus.PENDING);
+        order2.setUser(user);
+        orderRepository.save(order1);
+        orderRepository.save(order2);
+    }
+
+    @Test
+    void testUserOwnOrders() {
+        initializeDatabase();
+
+        User user = userRepository.findById(1).get();
+        System.out.println(user);
+        user.removeOrder(user.getOrderList().get(0));
+        System.out.println(user);
+    }
 }

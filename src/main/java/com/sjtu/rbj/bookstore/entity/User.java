@@ -1,5 +1,8 @@
 package com.sjtu.rbj.bookstore.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -7,12 +10,14 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Check;
@@ -46,20 +51,14 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false)
-    private UserType userType;
+    private UserType userType = UserType.NORMAL;
 
     private String name;
 
     @OneToOne(cascade = { CascadeType.PERSIST })
     @JoinColumn(name = "account_id", unique = true, nullable = false)
-    @Embedded private UserAccount userAccount;
-
-    @PrePersist
-    void prePersistInitialize() {
-        if (this.userType == null) {
-            this.userType = UserType.NORMAL;
-        }
-    }
+    @Embedded
+    private UserAccount userAccount;
 
     @Entity
     @Getter
@@ -87,6 +86,25 @@ public class User {
         @OneToOne(mappedBy = "userAccount")
         @JoinColumn(name = "user_id") // useless
         private User user;
+    }
+
+    @OneToMany(
+        mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER,
+        orphanRemoval = true
+    )
+    @OrderBy("`time` desc")
+    private List<Order> orderList = new ArrayList<>();
+
+    public void addOrder(Order order) {
+        orderList.add(order);
+        order.setUser(this);
+    }
+
+    public void removeOrder(Order order) {
+        if (orderList.contains(order)) {
+            orderList.remove(order);
+            order.setUser(null);
+        }
     }
 
 }

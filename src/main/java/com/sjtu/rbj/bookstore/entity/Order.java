@@ -6,10 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Check;
@@ -18,12 +20,10 @@ import org.hibernate.annotations.GenerationTime;
 
 import com.sjtu.rbj.bookstore.constant.OrderStatus;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author Bojun Ren
@@ -31,8 +31,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
-@RequiredArgsConstructor
+@ToString
 @NoArgsConstructor
 @Entity
 @Table(name = "`order`")
@@ -41,24 +40,23 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NonNull
-    @Column(name = "`user_id`", nullable = false)
-    @Check(constraints = "`status` IN ('PENDING', 'COMPLETE', 'TRANSPORTING')")
-    private Integer userId;
+    @ToString.Exclude
+    @ManyToOne
+    @JoinColumn(
+        name = "`user_id`",
+        nullable = false,
+        referencedColumnName = "`id`",
+        foreignKey = @ForeignKey(name = "order_user_fk")
+    )
+    private User user;
 
     @Generated(GenerationTime.INSERT)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT(NOW())")
     private Timestamp time;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OrderStatus status;
-
-    @PrePersist
-    public void prePersistInitialize() {
-        if (this.status == null) {
-            this.status = OrderStatus.COMPLETE;
-        }
-    }
+    @Check(constraints = "`status` IN ('PENDING', 'COMPLETE', 'TRANSPORTING')")
+    private OrderStatus status = OrderStatus.COMPLETE;
 
 }

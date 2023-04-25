@@ -56,7 +56,8 @@ public class UserServiceImpl implements UserService {
          */
         if (orderPending == null) {
             orderPending = new Order();
-            orderPending.setUserId(userId);
+            // TODO
+            // orderPending.setUserId(userId);
             orderPending.setStatus(OrderStatus.PENDING);
             orderDao.save(orderPending);
         }
