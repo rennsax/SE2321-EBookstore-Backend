@@ -7,9 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.ColumnDefault;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @Entity
-@Table(name = "order_item")
+@Table(name = "`order_item`")
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItem {
@@ -33,9 +34,19 @@ public class OrderItem {
     private Integer orderId;
 
     @Column(name = "item_id", nullable = false, columnDefinition = "BINARY(16)")
-    @ColumnTransformer(write = "uuid_to_bin(?)")
     private UUID itemId;
 
     @Column(nullable = false)
-    private Integer quantity = 1;
+    @ColumnDefault("1")
+    private Integer quantity;
+
+    @PrePersist
+    void prePersistInitialize() {
+        if (quantity == null) {
+            if (quantity <= 0) {
+                throw new IllegalArgumentException("Can set quantity to " + quantity.toString());
+            }
+            quantity = 1;
+        }
+    }
 }

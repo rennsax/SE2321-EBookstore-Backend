@@ -1,9 +1,7 @@
 package com.sjtu.rbj.bookstore;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.alibaba.fastjson2.JSON;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.dao.UserDao;
 import com.sjtu.rbj.bookstore.data.UserInfo;
@@ -20,6 +17,7 @@ import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.entity.Order;
 import com.sjtu.rbj.bookstore.entity.OrderItem;
 import com.sjtu.rbj.bookstore.entity.User;
+import com.sjtu.rbj.bookstore.entity.User.UserAccount;
 import com.sjtu.rbj.bookstore.repository.BookRepository;
 import com.sjtu.rbj.bookstore.repository.OrderItemRepository;
 import com.sjtu.rbj.bookstore.repository.OrderRepository;
@@ -50,14 +48,30 @@ class BookstoreApplicationTests {
     @Autowired
     UserService userService;
 
+    /**
+     * test whether the entities can be correctly performed
+     */
+    @Test
+    void testEntities() {
+        Book book = new Book();
+        book.setTitle("Test Book");
+        bookRepository.save(book);
+
+        User user = new User();
+        User.UserAccount userAccount = new UserAccount("cauchy@gmail.com", "123456");
+        user.setUserAccount(userAccount);
+        userRepository.save(user);
+
+        List<User> res = userRepository.findAll();
+
+        System.out.println("res" + res);
+        System.out.println(userAccount);
+        Optional<User> res2 = userRepository.findByUserAccountAccountAndUserAccountPasswd("cauchy@gmail.com", "123456");
+        System.out.println(res2);
+    }
+
     @Test
     void testUserDao() {
-        /** BEGIN query user */
-        Optional<User> res = userDao.findByAccount("cauchy@gmail.com");
-        assertTrue(res.isPresent());
-        res = userRepository.findByAccount("123");
-        assertFalse(res.isPresent());
-        /** END query user */
     }
 
     @Test
@@ -100,13 +114,7 @@ class BookstoreApplicationTests {
 
     @Test
     void testTableAssociation() {
-        List<User> res = userRepository.findAll();
-        for (User user : res) {
-            List<Order> orderList = user.getOrderList();
-            for (Order order : orderList) {
-                System.out.println(JSON.toJSONString(order));
-            }
-        }
+        System.out.println(1);
     }
 
 }

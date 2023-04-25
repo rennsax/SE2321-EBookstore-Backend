@@ -22,11 +22,11 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<User> findByAccount(String account) {
-        return repository.findByAccount(account);
+        return repository.findByUserAccountAccount(account);
     }
 
     @Override
     public Optional<User> findByAccountAndPasswd(String account, String passwd) {
-        return repository.findByAccountAndPasswd(account, passwd);
+        return repository.findByUserAccountAccountAndUserAccountPasswd(account, passwd);
     }
 }

@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -41,13 +42,16 @@ public class Order {
     private Integer id;
 
     @NonNull
-    @Column(name = "`user_id`")
+    @Column(name = "`user_id`", nullable = false)
+    @Check(constraints = "`status` IN ('PENDING', 'COMPLETE', 'TRANSPORTING')")
     private Integer userId;
 
     @Generated(GenerationTime.INSERT)
+    @Column(nullable = false)
     private Timestamp time;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private OrderStatus status;
 
     @PrePersist

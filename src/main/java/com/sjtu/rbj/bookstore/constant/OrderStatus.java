@@ -8,23 +8,16 @@ public enum OrderStatus {
     /**
      * An order that is pending, typically denotes the cart
      */
-    PENDING("pending"),
+    PENDING,
 
     /**
      * An order that is already complete
      */
-    COMPLETE("complete"),
+    COMPLETE,
 
     /**
      * An order that is submitted, but yet not complete
      */
-    TRANSPORTING("transporting");
+    TRANSPORTING;
 
-    private OrderStatus(String status) {
-        this.status = status;
-    }
-    public String getStatus() {
-        return status;
-    }
-    private String status;
 }

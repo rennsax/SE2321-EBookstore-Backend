@@ -6,22 +6,12 @@ package com.sjtu.rbj.bookstore.constant;
  */
 public enum UserType {
     /**
-     * Normal user
+     * normal user
      */
-    NORMAL("normal"),
+    NORMAL,
 
     /**
      * super user
      */
-    SUPER("super");
-
-    private UserType(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return this.type;
-    }
-
-    private String type;
+    SUPER;
 }

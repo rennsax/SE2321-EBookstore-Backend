@@ -17,12 +17,13 @@ public interface UserRepository extends JpaRepository<User, Integer> {
      * @param account the user's account
      * @return {@code Optional<User>}
      */
-    Optional<User> findByAccount(String account);
+    Optional<User> findByUserAccountAccount(String account);
+
     /**
      * find a user by account and password, used to verify authority
      * @param account
      * @param passwd
      * @return {@code Optional<User>}
      */
-    Optional<User> findByAccountAndPasswd(String account, String passwd);
+    Optional<User> findByUserAccountAccountAndUserAccountPasswd(String account, String passwd);
 }
