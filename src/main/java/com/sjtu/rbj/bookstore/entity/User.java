@@ -10,7 +10,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,7 +54,7 @@ public class User {
 
     private String name;
 
-    @OneToOne(cascade = { CascadeType.PERSIST })
+    @OneToOne(cascade = { CascadeType.ALL })
     @JoinColumn(name = "account_id", unique = true, nullable = false)
     @Embedded
     private UserAccount userAccount;
@@ -88,10 +87,7 @@ public class User {
         private User user;
     }
 
-    @OneToMany(
-        mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER,
-        orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("`time` desc")
     private List<Order> orderList = new ArrayList<>();
 

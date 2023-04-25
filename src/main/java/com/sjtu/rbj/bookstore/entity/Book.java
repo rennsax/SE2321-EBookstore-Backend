@@ -35,7 +35,10 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
+    @Column(
+        columnDefinition = "BINARY(16) DEFAULT(UUID_TO_BIN(UUID()))",
+        nullable = false, unique = true
+    )
     private UUID uuid;
 
     @Column(nullable = false)
