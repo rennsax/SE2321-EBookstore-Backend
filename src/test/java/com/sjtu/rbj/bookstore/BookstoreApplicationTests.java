@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.alibaba.fastjson2.JSON;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.dao.UserDao;
 import com.sjtu.rbj.bookstore.data.UserInfo;
@@ -95,6 +96,17 @@ class BookstoreApplicationTests {
         System.out.println(order.toString());
         orderRepository.save(order);
         System.out.println(order.toString());
+    }
+
+    @Test
+    void testTableAssociation() {
+        List<User> res = userRepository.findAll();
+        for (User user : res) {
+            List<Order> orderList = user.getOrderList();
+            for (Order order : orderList) {
+                System.out.println(JSON.toJSONString(order));
+            }
+        }
     }
 
 }

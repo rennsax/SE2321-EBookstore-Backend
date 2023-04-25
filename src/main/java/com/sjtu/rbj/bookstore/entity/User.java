@@ -1,30 +1,39 @@
 package com.sjtu.rbj.bookstore.entity;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import com.sjtu.rbj.bookstore.constant.UserType;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 
 /**
  * @author Bojun Ren
  * @date 2023/04/08
  */
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @Table(name = "user")
 public class User {
@@ -50,6 +59,9 @@ public class User {
 
     @Lob
     private byte[] avatar;
+
+    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
+    private List<Order> orderList = new ArrayList<>();
 
     @PrePersist
     void prePersistInitialize() {

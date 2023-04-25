@@ -17,17 +17,22 @@ import org.hibernate.annotations.GenerationTime;
 
 import com.sjtu.rbj.bookstore.constant.OrderStatus;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author Bojun Ren
  * @date 2023/04/20
  */
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
+@RequiredArgsConstructor
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "`order`")
 public class Order {
@@ -35,6 +40,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NonNull
     @Column(name = "`user_id`")
     private Integer userId;
 
