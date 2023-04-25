@@ -33,7 +33,6 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping("/login")
     public void getUser(@RequestBody Map<String, String> params, HttpServletRequest request) {
         String account = params.get(Constant.ACCOUNT);

@@ -4,9 +4,12 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Generated;
@@ -38,9 +41,14 @@ public class Order {
     @Generated(GenerationTime.INSERT)
     private Timestamp time;
 
-    private String status = OrderStatus.COMPLETE.getStatus();
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
-    public Order(Integer userId) {
-        this.userId = userId;
+    @PrePersist
+    public void prePersistInitialize() {
+        if (this.status == null) {
+            this.status = OrderStatus.COMPLETE;
+        }
     }
+
 }

@@ -42,6 +42,7 @@ public class BookController {
     @GetMapping
     public String getBookListForHomePage(@RequestParam(defaultValue = "4") Integer limit, @RequestParam(defaultValue = "0") Integer offset) {
         JSONArray res = new JSONArray(bookService.getBookListForHomePage(limit, offset));
+        log.info(Integer.toString(limit), Integer.toString(offset));
         return res.toString();
     }
 

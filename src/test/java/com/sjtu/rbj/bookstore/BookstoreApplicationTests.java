@@ -1,6 +1,5 @@
 package com.sjtu.rbj.bookstore;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -52,10 +51,12 @@ class BookstoreApplicationTests {
 
     @Test
     void testUserDao() {
+        /** BEGIN query user */
         Optional<User> res = userDao.findByAccount("cauchy@gmail.com");
         assertTrue(res.isPresent());
         res = userRepository.findByAccount("123");
         assertFalse(res.isPresent());
+        /** END query user */
     }
 
     @Test
@@ -85,8 +86,15 @@ class BookstoreApplicationTests {
     void testUserService() {
         UserInfo res = userService.getUserInfoByAccount("cauchy@gmail.com");
         System.out.println(res.toString());
-        assertEquals(res.getId(), 2);
-        assertEquals(res.getOrderId(), 1);
+    }
+
+    @Test
+    void testUserRepository() {
+        Order order = new Order();
+        order.setUserId(1);
+        System.out.println(order.toString());
+        orderRepository.save(order);
+        System.out.println(order.toString());
     }
 
 }

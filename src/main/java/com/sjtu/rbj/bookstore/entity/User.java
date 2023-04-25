@@ -1,10 +1,13 @@
 package com.sjtu.rbj.bookstore.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import com.sjtu.rbj.bookstore.constant.UserType;
@@ -13,15 +16,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.ToString;
+
 
 /**
  * @author Bojun Ren
  * @date 2023/04/08
  */
-
 @Data
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -33,8 +34,9 @@ public class User {
     @Column(name = "id")
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false)
-    private String userType = UserType.NORMAL.getType();
+    private UserType userType;
 
     @NonNull
     @Column(unique = true, nullable = false)
@@ -49,8 +51,10 @@ public class User {
     @Lob
     private byte[] avatar;
 
-    public User(String account, String passwd) {
-        this.account = account;
-        this.passwd = passwd;
+    @PrePersist
+    void prePersistInitialize() {
+        if (this.userType == null) {
+            this.userType = UserType.NORMAL;
+        }
     }
 }

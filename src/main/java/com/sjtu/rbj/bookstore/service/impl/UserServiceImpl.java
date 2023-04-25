@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         List<Order> orderAllList = orderDao.findByUserId(userId);
         Order orderPending = null;
         for (Order order : orderAllList) {
-            if (OrderStatus.PENDING.getStatus().equals(order.getStatus())) {
+            if (OrderStatus.PENDING == order.getStatus()) {
                 orderPending = order;
                 break;
             }
@@ -54,8 +54,9 @@ public class UserServiceImpl implements UserService {
          * If current user have no pending order, create one
          */
         if (orderPending == null) {
-            orderPending = new Order(userId);
-            orderPending.setStatus(OrderStatus.PENDING.getStatus());
+            orderPending = new Order();
+            orderPending.setUserId(userId);
+            orderPending.setStatus(OrderStatus.PENDING);
             orderDao.save(orderPending);
         }
         return new UserInfo(userId, orderPending.getId());
