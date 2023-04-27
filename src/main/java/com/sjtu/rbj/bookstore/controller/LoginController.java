@@ -2,13 +2,12 @@ package com.sjtu.rbj.bookstore.controller;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,13 +27,14 @@ class LoginErrorException extends RuntimeException {
 @Slf4j
 @RestController
 @CrossOrigin(Constant.ALLOW_ORIGIN)
+@RequestMapping("/user")
 public class LoginController {
 
     @Autowired
     private UserService userService;
 
     @PostMapping("/login")
-    public void getUser(@RequestBody Map<String, String> params, HttpServletRequest request) {
+    public void getUser(@RequestBody Map<String, String> params) {
         String account = params.get(Constant.ACCOUNT);
         String passwd = params.get(Constant.PASSWORD);
         log.info(account);
@@ -43,5 +43,4 @@ public class LoginController {
             throw new LoginErrorException();
         }
     }
-
 }

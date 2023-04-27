@@ -30,4 +30,9 @@ public class BookDaoImpl implements BookDao {
         return bookRepository.findWithLimitWithOffset(limit, offset);
     }
 
+    @Override
+    public Optional<Book> findById(Integer id) {
+        return bookRepository.findById(id);
+    }
+
 }

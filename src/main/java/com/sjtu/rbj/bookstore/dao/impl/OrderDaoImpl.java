@@ -1,6 +1,7 @@
 package com.sjtu.rbj.bookstore.dao.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,4 +28,10 @@ public class OrderDaoImpl implements OrderDao {
     public List<Order> findByUserId(Integer userId) {
         return orderRepository.findByUserId(userId);
     }
+
+    @Override
+    public Optional<Order> findById(Integer id) {
+        return orderRepository.findById(id);
+    }
+
 }

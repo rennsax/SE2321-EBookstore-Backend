@@ -84,6 +84,8 @@ TODO
 
 ### 订单操作 `/order`
 
+- GET `/pending?account=...`：通过用户账户获取 pending 状态的订单，返回订单主键。
+
 - GET `/{orderId}`：获取订单的全部信息，返回 JSON 数组，包含若干 JSON 对象，实现接口：
 
   ```typescript

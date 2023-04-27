@@ -26,4 +26,13 @@ public interface BookDao {
      * @return
      */
     Optional<Book> findByUuid(UUID uuid);
+
+	/**
+	 * Retrieves an entity by its id.
+	 *
+	 * @param id must not be {@literal null}.
+	 * @return the entity with the given id or {@literal Optional#empty()} if none found.
+	 * @throws IllegalArgumentException if {@literal id} is {@literal null}.
+	 */
+    Optional<Book> findById(Integer id);
 }

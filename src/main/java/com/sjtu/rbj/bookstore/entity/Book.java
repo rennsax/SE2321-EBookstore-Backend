@@ -1,5 +1,6 @@
 package com.sjtu.rbj.bookstore.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.UUID;
@@ -30,7 +31,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Table(name = "`book`")
-public class Book {
+public class Book implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

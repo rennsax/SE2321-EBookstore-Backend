@@ -1,6 +1,7 @@
 package com.sjtu.rbj.bookstore.data;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -17,5 +18,5 @@ import lombok.NoArgsConstructor;
 public class OrderInfo {
     private Integer id;
     private Timestamp time;
-    private List<BookOrdered> bookOrderedList;
+    private List<BookOrdered> bookOrderedList = new ArrayList<>();
 }

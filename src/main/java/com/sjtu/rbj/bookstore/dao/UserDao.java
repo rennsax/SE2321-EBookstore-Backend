@@ -22,4 +22,9 @@ public interface UserDao {
      * @return {@code Optional<User>}
      */
     Optional<User> findByAccountAndPasswd(String account, String passwd);
+
+	/**
+	 * Flushes all pending changes to the database.
+	 */
+	void flush();
 }

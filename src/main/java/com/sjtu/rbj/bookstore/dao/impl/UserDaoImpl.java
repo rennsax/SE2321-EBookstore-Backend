@@ -29,4 +29,10 @@ public class UserDaoImpl implements UserDao {
     public Optional<User> findByAccountAndPasswd(String account, String passwd) {
         return repository.findByUserAccountAccountAndUserAccountPasswd(account, passwd);
     }
+
+    @Override
+    public void flush() {
+        repository.flush();
+    }
+
 }

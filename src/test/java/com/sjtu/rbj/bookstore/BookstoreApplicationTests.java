@@ -14,7 +14,6 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -64,6 +63,7 @@ class BookstoreApplicationTests {
 
     @PersistenceContext
     EntityManager entityManager;
+
     EntityTransaction transaction;
 
     public void initialEm() {
@@ -78,32 +78,38 @@ class BookstoreApplicationTests {
         entityManagerFactory.close();
     }
 
+    @Test
+    public void testUserService() {
+        assertTrue(userService.enableLogin("cauchy@gmail.com", "123456"));
+    }
+
     /**
      * test whether the entities can be correctly performed
      */
     @Test
     @Transactional
-    @Rollback(false)
     void testEntities() {
         /** `book` table (initial data from "data-mysql.sql") */
         long bookCount = bookRepository.count();
-        assertEquals(bookCount, 47, "books count error!");
+        assertEquals(46, bookCount, "books count error!");
 
         /** `user` table */
-        Optional<User> maybeUser = userRepository.findByUserAccountAccountAndUserAccountPasswd("cauchy", "123");
+        Optional<User> maybeUser = userRepository.findByUserAccountAccountAndUserAccountPasswd("cauchy@gmail.com", "123456");
         assertTrue(maybeUser.isPresent(), "user \"cauchy\" not found!");
         User user = maybeUser.get();
         user.setName("cauchy");
+        assertEquals(2, user.getOrderList().size());
 
         /** `order` table */
         List<Order> orderAll = orderRepository.findAll();
-        assertEquals(orderAll.size(), 2);
+        assertEquals(2, orderAll.size());
         Order order = orderAll.get(1); /** the second order, PENDING, contains two items */
-        assertEquals(order.getUser(), user);
-        assertEquals(order.getOrderItemList().size(), 2);
+        assertEquals(user, order.getUser());
+        assertEquals(3, order.getOrderItemList().size());
     }
 
-    @BeforeEach
+    // @BeforeEach
+    @Test
     @Transactional
     @Rollback(false)
     void initializeDatabase() {
@@ -130,7 +136,6 @@ class BookstoreApplicationTests {
         order2.setUser(user);
 
         orderRepository.save(order1);
-        System.out.println("123");
         assertEquals(orderRepository.count(), 1);
         orderRepository.save(order2);
 
@@ -156,6 +161,23 @@ class BookstoreApplicationTests {
 
         /** insert two order items for order1 */
         order1.addOrderItem(orderItem1);
+    }
+
+    @Test
+    // TODO confusing yet
+    void testUserAddOrder() {
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        System.out.println("=========");
+        // initialEm();
+        // User user = entityManager.find(User.class, 1);
+        // User user = userRepository.findById(1).get();
+        User user = userRepository.findAll().get(0);
+        System.out.println(entityManager.contains(user));
+        System.out.println(user.getOrderList().size());
+        System.out.println("=========");
+        transaction.commit();
+        // destroyEm();
     }
 
 }

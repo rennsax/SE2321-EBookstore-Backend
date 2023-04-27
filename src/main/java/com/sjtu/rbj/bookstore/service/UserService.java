@@ -18,7 +18,7 @@ public interface UserService {
     boolean enableLogin(String account, String passwd);
 
     /**
-     * get necessary information by user's account
+     * get information {userId, orderId} by user's account
      * @param account user's account, unique
      * @return UserInfo {userId, orderId}
      * @throws NoSuchElementException if no such user

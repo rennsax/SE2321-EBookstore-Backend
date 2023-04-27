@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sjtu.rbj.bookstore.constant.OrderStatus;
-import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.dao.UserDao;
 import com.sjtu.rbj.bookstore.data.UserInfo;
 import com.sjtu.rbj.bookstore.entity.Order;
@@ -26,41 +25,31 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
 
-    @Autowired
-    private OrderDao orderDao;
-
     @Override
     public boolean enableLogin(String account, String passwd) {
-        // TODO
-        return true;
+        Optional<User> maybeUser = userDao.findByAccountAndPasswd(account, passwd);
+        return maybeUser.isPresent();
     }
 
     @Override
     public UserInfo getUserInfoByAccount(String account) {
-        Optional<User> userRes = userDao.findByAccount(account);
-        User user = userRes.orElseThrow(() -> new NoSuchElementException("Cannot find such account!"));
-        return this.getUserInfoById(user.getId());
-    }
+        Optional<User> maybeUser = userDao.findByAccount(account);
+        User user = maybeUser.orElseThrow(() -> new NoSuchElementException("Cannot find such account!"));
+        List<Order> orderList = user.getOrderList();
 
-    private UserInfo getUserInfoById(Integer userId) {
-        List<Order> orderAllList = orderDao.findByUserId(userId);
         Order orderPending = null;
-        for (Order order : orderAllList) {
+        for (Order order : orderList) {
             if (OrderStatus.PENDING == order.getStatus()) {
                 orderPending = order;
                 break;
             }
         }
-        /**
-         * If current user have no pending order, create one
-         */
         if (orderPending == null) {
             orderPending = new Order();
-            // TODO
-            // orderPending.setUserId(userId);
             orderPending.setStatus(OrderStatus.PENDING);
-            orderDao.save(orderPending);
+            user.addOrder(orderPending);
+            userDao.flush();
         }
-        return new UserInfo(userId, orderPending.getId());
+        return new UserInfo(user.getId(), orderPending.getId());
     }
 }
