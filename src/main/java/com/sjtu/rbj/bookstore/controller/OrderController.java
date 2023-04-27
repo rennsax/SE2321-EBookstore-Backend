@@ -1,9 +1,7 @@
 package com.sjtu.rbj.bookstore.controller;
 
-import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,10 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.sjtu.rbj.bookstore.constant.Constant;
-import com.sjtu.rbj.bookstore.entity.OrderItem;
-import com.sjtu.rbj.bookstore.repository.OrderItemRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,18 +25,10 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin(Constant.ALLOW_ORIGIN)
 public class OrderController {
 
-    @Autowired
-    private OrderItemRepository orderItemRepository;
-
     @PostMapping("/submit")
     public String submitOrder(@RequestBody Map<String, String> params) {
-        Integer orderId = Integer.valueOf(params.get("orderId"));
-        log.info("Current order id: " + Integer.toString(orderId));
-        List<OrderItem> orderItemList = orderItemRepository.findByOrderId(orderId);
-        log.info(orderItemList.toString());
-        JSONObject res = new JSONObject();
-        res.put("flag", true);
-        return res.toString();
+        // TODO
+        return "";
     }
 
     // TODO

@@ -91,16 +91,26 @@ public class User {
     @OrderBy("`time` desc")
     private List<Order> orderList = new ArrayList<>();
 
-    public void addOrder(Order order) {
-        orderList.add(order);
+    public boolean addOrder(Order order) {
+        boolean isAdded = orderList.add(order);
         order.setUser(this);
+        return isAdded;
     }
 
-    public void removeOrder(Order order) {
-        if (orderList.contains(order)) {
-            orderList.remove(order);
+    public boolean removeOrder(Order order) {
+        boolean isRemoved = this.orderList.remove(order);
+        if (isRemoved) {
             order.setUser(null);
         }
+        return isRemoved;
+    }
+
+    public Order removeOrder(int index) {
+        return this.orderList.remove(index);
+    }
+
+    public void clearOrder() {
+        this.orderList.clear();
     }
 
 }

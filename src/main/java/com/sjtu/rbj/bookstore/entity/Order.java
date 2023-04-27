@@ -1,8 +1,8 @@
 package com.sjtu.rbj.bookstore.entity;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -63,7 +63,7 @@ public class Order {
     private Timestamp time;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "CHAR(20)")
     private OrderStatus status = OrderStatus.COMPLETE;
 
     @OneToMany(
@@ -71,18 +71,28 @@ public class Order {
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
-    private Set<OrderItem> orderItemSet = new HashSet<>();
+    private List<OrderItem> orderItemList = new ArrayList<>();
 
-    public void addOrderItem(OrderItem orderItem) {
-        this.orderItemSet.add(orderItem);
+    public boolean addOrderItem(OrderItem orderItem) {
+        boolean isAdded = this.orderItemList.add(orderItem);
         orderItem.setOrder(this);
+        return isAdded;
     }
 
-    public void removeOrderItem(OrderItem orderItem) {
-        if (this.orderItemSet.contains(orderItem)) {
-            this.orderItemSet.remove(orderItem);
+    public boolean removeOrderItem(OrderItem orderItem) {
+        boolean isRemoved = this.orderItemList.remove(orderItem);
+        if (isRemoved) {
+            orderItem.setOrder(null);
         }
-        orderItem.setOrder(null);
+        return isRemoved;
+    }
+
+    public OrderItem removeOrderItem(int index) {
+        return this.orderItemList.remove(index);
+    }
+
+    public void clearOrderItem() {
+        this.orderItemList.clear();
     }
 
 
