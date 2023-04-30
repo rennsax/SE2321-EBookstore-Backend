@@ -95,7 +95,6 @@ public class Order {
         this.orderItemList.clear();
     }
 
-
     @Getter
     @Setter
     @Entity

@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Check;
 
@@ -57,15 +58,25 @@ public class User {
     @OneToOne(cascade = { CascadeType.ALL })
     @JoinColumn(name = "account_id", unique = true, nullable = false)
     @Embedded
-    private UserAccount userAccount;
+    private UserAccount userAccount = new UserAccount();
 
-    @Entity
+    public User(String account, String passwd) {
+        this.userAccount.setAccount(account);
+        this.userAccount.setPasswd(passwd);
+    }
+
+    @Transient
+    public void setPasswd(String passwd) {
+        this.userAccount.setPasswd(passwd);
+    }
+
     @Getter
     @Setter
     @NoArgsConstructor
     @RequiredArgsConstructor
     @ToString
     @Table(name = "`user_account`")
+    @Entity
     @Embeddable
     public static class UserAccount {
 

@@ -6,17 +6,17 @@ package com.sjtu.rbj.bookstore.constant;
  */
 public enum OrderStatus {
     /**
-     * An order that is pending, typically denotes the cart
+     * An order that is pending, typically denotes the cart.
      */
     PENDING,
 
     /**
-     * An order that is already complete
+     * An order that is already complete.
      */
     COMPLETE,
 
     /**
-     * An order that is submitted, but yet not complete
+     * An order that is submitted, but yet not complete.
      */
     TRANSPORTING;
 

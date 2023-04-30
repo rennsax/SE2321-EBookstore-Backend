@@ -10,16 +10,21 @@ import com.sjtu.rbj.bookstore.entity.User;
  */
 public interface UserDao {
     /**
-     * find user by account
-     * @param account the user's account
-     * @return {@code Optional<User>}
+     * Retrieves a user entity by its account (defined as unique key).
+     *
+     * @param account must not be {@literal null}.
+     * @return the entity with the given account or {@literal Optional#empty()} if none found.
+	 * @throws IllegalArgumentException if {@literal account} is {@literal null}.
      */
     Optional<User> findByAccount(String account);
+
     /**
-     * find a user by account and password, used to verify authority
-     * @param account
-     * @param passwd
-     * @return {@code Optional<User>}
+     * Retrieves a user entity by its account (defined as unique key) and passwd.
+     *
+     * @param account must not be {@literal null}.
+     * @param passwd must not be {@literal null}.
+     * @return the entity with the given account or {@literal Optional#empty()} if none found.
+	 * @throws IllegalArgumentException if either {@literal account} or {@literal passwd} is {@literal null}.
      */
     Optional<User> findByAccountAndPasswd(String account, String passwd);
 

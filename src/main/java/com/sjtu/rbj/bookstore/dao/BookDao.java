@@ -13,17 +13,21 @@ import com.sjtu.rbj.bookstore.entity.Book;
 public interface BookDao {
 
     /**
-     * from mysql database, get book data with limit and offset
-     * @param limit
-     * @param offset
-     * @return {@code List<Book>}
+     * Retrieves book entities, with maximum entity number and a certain offset.
+     *
+     * @param limit the maximum entity number, must not be {@literal null}.
+     * @param offset must not be {@literal null}.
+     * @return available entities no more than {@literal limit}.
+	 * @throws IllegalArgumentException if either {@literal limit} or {@literal offset} is {@literal null}.
      */
     List<Book> findWithLimitWithOffset(Integer limit, Integer offset);
 
     /**
-     * get book information by uuid
-     * @param uuid the uuid of queried book
-     * @return
+     * Retrieves a book entity by its uuid (defined as unique key).
+     *
+     * @param uuid must not be {@literal null}.
+     * @return the entity with the given uuid or {@literal Optional#empty()} if none found.
+	 * @throws IllegalArgumentException if {@literal uuid} is {@literal null}.
      */
     Optional<Book> findByUuid(UUID uuid);
 

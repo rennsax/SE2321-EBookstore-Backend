@@ -12,9 +12,11 @@ import com.sjtu.rbj.bookstore.entity.Order;
  */
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     /**
-     * find all orders belonging to the user
-     * @param userId
-     * @return {@code List<Order>}
+     * Retrieves all order entities mapping to the target user.
+     *
+     * @param userId must not be {@literal null}
+     * @return all order entities belonging to the target user.
+	 * @throws IllegalArgumentException if {@literal userId} is {@literal null}.
      */
     List<Order> findByUserId(Integer userId);
 }

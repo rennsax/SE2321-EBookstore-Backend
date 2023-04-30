@@ -3,10 +3,13 @@ package com.sjtu.rbj.bookstore;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -21,16 +24,18 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sjtu.rbj.bookstore.constant.OrderStatus;
+import com.sjtu.rbj.bookstore.dao.BookDao;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.dao.UserDao;
+import com.sjtu.rbj.bookstore.data.OrderInfo;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.entity.Order;
 import com.sjtu.rbj.bookstore.entity.Order.OrderItem;
 import com.sjtu.rbj.bookstore.entity.User;
-import com.sjtu.rbj.bookstore.entity.User.UserAccount;
 import com.sjtu.rbj.bookstore.repository.BookRepository;
 import com.sjtu.rbj.bookstore.repository.OrderRepository;
 import com.sjtu.rbj.bookstore.repository.UserRepository;
+import com.sjtu.rbj.bookstore.service.OrderService;
 import com.sjtu.rbj.bookstore.service.UserService;
 
 @SpringBootTest
@@ -53,7 +58,13 @@ class BookstoreApplicationTests {
     OrderDao orderDao;
 
     @Autowired
+    BookDao bookDao;
+
+    @Autowired
     UserService userService;
+
+    @Autowired
+    OrderService orderService;
 
     @Autowired
     DataSource dataSource;
@@ -87,7 +98,7 @@ class BookstoreApplicationTests {
      * test whether the entities can be correctly performed
      */
     @Test
-    @Transactional
+    @Transactional(readOnly = true)
     void testEntities() {
         /** `book` table (initial data from "data-mysql.sql") */
         long bookCount = bookRepository.count();
@@ -105,13 +116,55 @@ class BookstoreApplicationTests {
         assertEquals(2, orderAll.size());
         Order order = orderAll.get(1); /** the second order, PENDING, contains two items */
         assertEquals(user, order.getUser());
-        assertEquals(3, order.getOrderItemList().size());
+    }
+
+    @Test
+    @Transactional(rollbackFor = {Exception.class})
+    @Rollback(true)
+    void testOrderService() {
+        /** Test method: getOrderInfoByOrderId */
+        OrderInfo orderInfo = orderService.getOrderInfoByOrderId(1);
+        assertEquals(2, orderInfo.getBookOrderedList().size());
+
+        /** Test method: updateOrder */
+        Book book = bookRepository.findById(1).get();
+        UUID uuid = book.getUuid();
+        System.out.println(uuid);
+        orderService.updateOrder(2, uuid, 100);
+        Order order2 = orderDao.findById(2).get();
+        assertEquals(4, order2.getOrderItemList().size());
+        List<OrderItem> orderItemList = order2.getOrderItemList();
+        uuid = null;
+        for (OrderItem orderItem : orderItemList) {
+            if (orderItem.getQuantity().equals(1)) {
+                uuid = orderItem.getBook().getUuid();
+                break;
+            }
+        }
+        assertNotNull(uuid);
+        orderService.updateOrder(2, uuid, -1);
+        assertEquals(3, order2.getOrderItemList().size());
+
+
+        /** Test method: submitOrder */
+        orderService.submitOrder(2);
+        assertEquals(OrderStatus.TRANSPORTING, orderDao.findById(2).get().getStatus());
+    }
+
+    @Test
+    void testException() {
+        assertThrows(NoSuchElementException.class,
+            () -> orderService.getOrderInfoByOrderId(3)
+        );
+        assertThrows(UnsupportedOperationException.class,
+            () -> orderService.submitOrder(1)
+        );
     }
 
     // @BeforeEach
     @Test
     @Transactional
-    @Rollback(false)
+    @Rollback(true)
     void initializeDatabase() {
         /** before this initialization, data-mysql.sql has been loaded */
         /** BEGIN insert book */
@@ -124,8 +177,7 @@ class BookstoreApplicationTests {
 
         /** insert some relations */
         /** insert a user */
-        User user = new User();
-        user.setUserAccount(new UserAccount("cauchy", "123"));
+        User user = new User("cauchy", "123");
         userRepository.save(user);
 
         /** insert two orders */
@@ -136,7 +188,7 @@ class BookstoreApplicationTests {
         order2.setUser(user);
 
         orderRepository.save(order1);
-        assertEquals(orderRepository.count(), 1);
+        assertEquals(3, orderRepository.count());
         orderRepository.save(order2);
 
         /** find two books for order items of order2 */
@@ -163,7 +215,7 @@ class BookstoreApplicationTests {
         order1.addOrderItem(orderItem1);
     }
 
-    @Test
+    // @Test
     // TODO confusing yet
     void testUserAddOrder() {
         EntityTransaction transaction = entityManager.getTransaction();

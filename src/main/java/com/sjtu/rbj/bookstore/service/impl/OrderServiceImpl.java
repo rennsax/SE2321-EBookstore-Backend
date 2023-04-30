@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.sjtu.rbj.bookstore.constant.OrderStatus;
 import com.sjtu.rbj.bookstore.dao.BookDao;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.data.BookOrdered;
@@ -33,11 +36,15 @@ public class OrderServiceImpl implements OrderService {
     public OrderInfo getOrderInfoByOrderId(Integer orderId) {
         Optional<Order> maybeOrder = orderDao.findById(orderId);
         Order order = maybeOrder.orElseThrow(() -> new NoSuchElementException("no such order!"));
+
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setId(orderId);
         orderInfo.setTime(order.getTime());
+
         ArrayList<BookOrdered> bookOrderedList = new ArrayList<BookOrdered>();
-        List<OrderItem> orderItemList = order.getOrderItemList();
+
+        /** This list is a clone, not managed. */
+        final List<OrderItem> orderItemList = order.getOrderItemList();
         for (OrderItem orderItem : orderItemList) {
             Optional<Book> maybeBook = bookDao.findById(orderItem.getId());
             Book book = maybeBook.orElseThrow(() -> new RuntimeException("unexpected book not found error!"));
@@ -48,5 +55,71 @@ public class OrderServiceImpl implements OrderService {
         return orderInfo;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void submitOrder(Integer orderId) {
+        Optional<Order> maybeOrder = orderDao.findById(orderId);
+        Order order = maybeOrder.orElseThrow(() -> new NoSuchElementException());
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new UnsupportedOperationException();
+        }
+        order.setStatus(OrderStatus.TRANSPORTING);
+    }
+
+    @Override
+    public List<Order> getOrderByUserId(Integer userId) {
+        List<Order> orderList = orderDao.findByUserId(userId);
+        orderList.sort((o1, o2) -> {
+            return o1.getTime().compareTo(o2.getTime());
+        });
+        return orderList;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateOrder(Integer orderId, UUID uuid, Integer quantity) {
+        if (orderId == null || uuid == null || quantity == null) {
+            throw new IllegalArgumentException("null parameters are not permitted!");
+        }
+        Optional<Order> maybeOrder = orderDao.findById(orderId);
+        Order order = maybeOrder.orElseThrow(() -> new NoSuchElementException("no such order!"));
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new UnsupportedOperationException("Only \"pending\" orders can be updated!");
+        }
+
+        Optional<Book> maybeBook = bookDao.findByUuid(uuid);
+        Book targetBook = maybeBook.orElseThrow(() -> new NoSuchElementException("No such book!"));
+
+        /** Whether the order already contains the target book. */
+        final List<OrderItem> orderItemList = order.getOrderItemList();
+        OrderItem targetOrderItem = null;
+        for (OrderItem orderItem : orderItemList) {
+            if (orderItem.getBook() == targetBook) {
+                targetOrderItem = orderItem;
+                break;
+            }
+        }
+
+        if (targetOrderItem == null) {
+            if (quantity <= 0) {
+                return false;
+            }
+            targetOrderItem = new OrderItem();
+            targetOrderItem.setBook(targetBook);
+            targetOrderItem.setQuantity(quantity);
+            order.addOrderItem(targetOrderItem);
+            return true;
+        }
+        int afterQuantity = targetOrderItem.getQuantity() + quantity;
+        if (afterQuantity < 0) {
+            return false;
+        }
+        if (afterQuantity == 0) {
+            order.removeOrderItem(targetOrderItem);
+            return true;
+        }
+        targetOrderItem.setQuantity(afterQuantity);
+        return true;
+    }
 
 }
