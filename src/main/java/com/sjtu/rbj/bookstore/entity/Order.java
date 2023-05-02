@@ -25,7 +25,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
-import com.sjtu.rbj.bookstore.constant.OrderStatus;
+import com.sjtu.rbj.bookstore.constant.OrderState;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,7 +42,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Table(name = "`order`")
-@Check(constraints = "`status` IN ('PENDING', 'COMPLETE', 'TRANSPORTING')")
+@Check(constraints = "`state` IN ('PENDING', 'COMPLETE', 'TRANSPORTING')")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,7 +64,7 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "CHAR(20)")
-    private OrderStatus status = OrderStatus.COMPLETE;
+    private OrderState state = OrderState.COMPLETE;
 
     @OneToMany(
         mappedBy = "order",

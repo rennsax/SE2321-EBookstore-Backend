@@ -23,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sjtu.rbj.bookstore.constant.OrderStatus;
+import com.sjtu.rbj.bookstore.constant.OrderState;
 import com.sjtu.rbj.bookstore.dao.BookDao;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.dao.UserDao;
@@ -109,11 +109,11 @@ class BookstoreApplicationTests {
         assertTrue(maybeUser.isPresent(), "user \"cauchy\" not found!");
         User user = maybeUser.get();
         user.setName("cauchy");
-        assertEquals(2, user.getOrderList().size());
+        assertEquals(4, user.getOrderList().size());
 
         /** `order` table */
         List<Order> orderAll = orderRepository.findAll();
-        assertEquals(2, orderAll.size());
+        assertEquals(4, orderAll.size());
         Order order = orderAll.get(1); /** the second order, PENDING, contains two items */
         assertEquals(user, order.getUser());
     }
@@ -124,16 +124,16 @@ class BookstoreApplicationTests {
     void testOrderService() {
         /** Test method: getOrderInfoByOrderId */
         OrderInfo orderInfo = orderService.getOrderInfoByOrderId(1);
-        assertEquals(2, orderInfo.getBookOrderedList().size());
+        assertEquals(3, orderInfo.getBookOrderedList().size());
 
         /** Test method: updateOrder */
         Book book = bookRepository.findById(1).get();
         UUID uuid = book.getUuid();
         System.out.println(uuid);
-        orderService.updateOrder(2, uuid, 100);
-        Order order2 = orderDao.findById(2).get();
-        assertEquals(4, order2.getOrderItemList().size());
-        List<OrderItem> orderItemList = order2.getOrderItemList();
+        orderService.updateOrder(4, uuid, 100);
+        Order order4 = orderDao.findById(4).get();
+        assertEquals(4, order4.getOrderItemList().size());
+        List<OrderItem> orderItemList = order4.getOrderItemList();
         uuid = null;
         for (OrderItem orderItem : orderItemList) {
             if (orderItem.getQuantity().equals(1)) {
@@ -142,19 +142,19 @@ class BookstoreApplicationTests {
             }
         }
         assertNotNull(uuid);
-        orderService.updateOrder(2, uuid, -1);
-        assertEquals(3, order2.getOrderItemList().size());
+        orderService.updateOrder(4, uuid, -1);
+        assertEquals(3, order4.getOrderItemList().size());
 
 
         /** Test method: submitOrder */
-        orderService.submitOrder(2);
-        assertEquals(OrderStatus.TRANSPORTING, orderDao.findById(2).get().getStatus());
+        orderService.submitOrder(4);
+        assertEquals(OrderState.TRANSPORTING, orderDao.findById(2).get().getState());
     }
 
     @Test
     void testException() {
         assertThrows(NoSuchElementException.class,
-            () -> orderService.getOrderInfoByOrderId(3)
+            () -> orderService.getOrderInfoByOrderId(5)
         );
         assertThrows(UnsupportedOperationException.class,
             () -> orderService.submitOrder(1)
@@ -184,11 +184,11 @@ class BookstoreApplicationTests {
         Order order1 = new Order();
         order1.setUser(user);
         Order order2 = new Order();
-        order2.setStatus(OrderStatus.PENDING);
+        order2.setState(OrderState.PENDING);
         order2.setUser(user);
 
         orderRepository.save(order1);
-        assertEquals(3, orderRepository.count());
+        assertEquals(5, orderRepository.count());
         orderRepository.save(order2);
 
         /** find two books for order items of order2 */

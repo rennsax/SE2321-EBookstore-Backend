@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.sjtu.rbj.bookstore.constant.Constant;
+import com.sjtu.rbj.bookstore.constant.Constants;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.service.BookService;
 
@@ -38,7 +38,7 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @CrossOrigin(Constant.ALLOW_ORIGIN)
+    @CrossOrigin(Constants.ALLOW_ORIGIN)
     @GetMapping
     public String getBookListForHomePage(@RequestParam(defaultValue = "4") Integer limit, @RequestParam(defaultValue = "0") Integer offset) {
         JSONArray res = new JSONArray(bookService.getBookListForHomePage(limit, offset));
@@ -46,7 +46,7 @@ public class BookController {
         return res.toString();
     }
 
-    @CrossOrigin(Constant.ALLOW_ORIGIN)
+    @CrossOrigin(Constants.ALLOW_ORIGIN)
     @GetMapping("/{uuid}")
     public String getBook(@PathVariable("uuid") UUID uuid) {
         log.info(uuid.toString());

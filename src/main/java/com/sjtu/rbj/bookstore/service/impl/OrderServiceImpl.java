@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sjtu.rbj.bookstore.constant.OrderStatus;
+import com.sjtu.rbj.bookstore.constant.Constants;
+import com.sjtu.rbj.bookstore.constant.OrderState;
 import com.sjtu.rbj.bookstore.dao.BookDao;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.data.BookOrdered;
@@ -40,14 +41,14 @@ public class OrderServiceImpl implements OrderService {
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setId(orderId);
         orderInfo.setTime(order.getTime());
+        orderInfo.setState(order.getState());
 
         ArrayList<BookOrdered> bookOrderedList = new ArrayList<BookOrdered>();
 
         /** This list is a clone, not managed. */
         final List<OrderItem> orderItemList = order.getOrderItemList();
         for (OrderItem orderItem : orderItemList) {
-            Optional<Book> maybeBook = bookDao.findById(orderItem.getId());
-            Book book = maybeBook.orElseThrow(() -> new RuntimeException("unexpected book not found error!"));
+            Book book = orderItem.getBook();
             BookOrdered bookOrdered = new BookOrdered(book.getUuid(), orderItem.getQuantity());
             bookOrderedList.add(bookOrdered);
         }
@@ -60,19 +61,32 @@ public class OrderServiceImpl implements OrderService {
     public void submitOrder(Integer orderId) {
         Optional<Order> maybeOrder = orderDao.findById(orderId);
         Order order = maybeOrder.orElseThrow(() -> new NoSuchElementException());
-        if (order.getStatus() != OrderStatus.PENDING) {
+        if (order.getState() != OrderState.PENDING) {
             throw new UnsupportedOperationException();
         }
-        order.setStatus(OrderStatus.TRANSPORTING);
+        order.setState(OrderState.TRANSPORTING);
     }
 
     @Override
-    public List<Order> getOrderByUserId(Integer userId) {
+    public List<OrderInfo> getOrderByUserId(Integer userId) {
         List<Order> orderList = orderDao.findByUserId(userId);
         orderList.sort((o1, o2) -> {
             return o1.getTime().compareTo(o2.getTime());
         });
-        return orderList;
+        List<OrderInfo> res = new ArrayList<>();
+        for (Order order : orderList) {
+            if (order.getState() == OrderState.PENDING) {
+                continue;
+            }
+            List<OrderItem> orderItemList = order.getOrderItemList();
+            List<BookOrdered> bookOrderedList = new ArrayList<>();
+            for (OrderItem orderItem : orderItemList) {
+                bookOrderedList.add(new BookOrdered(orderItem.getBook().getUuid(), orderItem.getQuantity()));
+            }
+            res.add(new OrderInfo(order.getId() + Constants.ORDER_NUMBER_BIAS, order.getState(), order.getTime(),
+                    bookOrderedList));
+        }
+        return res;
     }
 
     @Override
@@ -83,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
         }
         Optional<Order> maybeOrder = orderDao.findById(orderId);
         Order order = maybeOrder.orElseThrow(() -> new NoSuchElementException("no such order!"));
-        if (order.getStatus() != OrderStatus.PENDING) {
+        if (order.getState() != OrderState.PENDING) {
             throw new UnsupportedOperationException("Only \"pending\" orders can be updated!");
         }
 

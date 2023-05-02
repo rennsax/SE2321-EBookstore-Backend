@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import com.sjtu.rbj.bookstore.data.OrderInfo;
-import com.sjtu.rbj.bookstore.entity.Order;
 
 /**
  * @author Bojun Ren
@@ -37,13 +36,13 @@ public interface OrderService {
     void submitOrder(Integer orderId);
 
     /**
-     * Get all orders by user id.
+     * Get all orders by user id (except the "pending" order).
      *
      * @param userId must not be {@literal null}.
-     * @return all orders belonging to the user.
+     * @return all orders (except a "pending" order) belonging to the user, packed as {@code OrderInfo}
 	 * @throws IllegalArgumentException if {@literal userId} is {@literal null}.
      */
-    List<Order> getOrderByUserId(Integer userId);
+    List<OrderInfo> getOrderByUserId(Integer userId);
 
     /**
      * Update the ordered item(s). Only "pending" orders' items can be updated.

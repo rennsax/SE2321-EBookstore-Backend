@@ -1,5 +1,6 @@
 package com.sjtu.rbj.bookstore.controller;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,11 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson2.JSON;
-import com.sjtu.rbj.bookstore.constant.Constant;
+import com.sjtu.rbj.bookstore.constant.Constants;
 import com.sjtu.rbj.bookstore.data.OrderInfo;
 import com.sjtu.rbj.bookstore.service.OrderService;
 
@@ -29,8 +31,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RestController
-@RequestMapping(path = "/order/*")
-@CrossOrigin(Constant.ALLOW_ORIGIN)
+@RequestMapping(path = "/order**")
+@CrossOrigin(Constants.ALLOW_ORIGIN)
 public class OrderController {
 
     @Autowired
@@ -72,5 +74,15 @@ public class OrderController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOrder() {
+        // TODO
+    }
+
+    /**
+     * Handle the request to get the user's all orders.
+     */
+    @GetMapping
+    public String getAllOrderByUserId(@RequestParam("userId") Integer userId) {
+        List<OrderInfo> orderInfoList = orderService.getOrderByUserId(userId);
+        return JSON.toJSONString(orderInfoList);
     }
 }

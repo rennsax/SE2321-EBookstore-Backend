@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sjtu.rbj.bookstore.constant.OrderState;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderInfo {
     private Integer id;
+    private OrderState state;
     private Timestamp time;
     private List<BookOrdered> bookOrderedList = new ArrayList<>();
 }

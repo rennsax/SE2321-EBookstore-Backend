@@ -4,7 +4,7 @@ package com.sjtu.rbj.bookstore.constant;
  * @author Bojun Ren
  * @data 2023/04/23
  */
-public enum OrderStatus {
+public enum OrderState {
     /**
      * An order that is pending, typically denotes the cart.
      */
@@ -19,5 +19,4 @@ public enum OrderStatus {
      * An order that is submitted, but yet not complete.
      */
     TRANSPORTING;
-
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sjtu.rbj.bookstore.constant.Constant;
+import com.sjtu.rbj.bookstore.constant.Constants;
 import com.sjtu.rbj.bookstore.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ class LoginErrorException extends RuntimeException {
  */
 @Slf4j
 @RestController
-@CrossOrigin(Constant.ALLOW_ORIGIN)
+@CrossOrigin(Constants.ALLOW_ORIGIN)
 public class LoginController {
 
     @Autowired
@@ -33,8 +33,8 @@ public class LoginController {
 
     @PostMapping("/login")
     public void getUser(@RequestBody Map<String, String> params) {
-        String account = params.get(Constant.ACCOUNT);
-        String passwd = params.get(Constant.PASSWORD);
+        String account = params.get(Constants.ACCOUNT);
+        String passwd = params.get(Constants.PASSWORD);
         log.info(account);
         log.info(passwd);
         if (account == null || passwd == null || !userService.enableLogin(account, passwd)) {

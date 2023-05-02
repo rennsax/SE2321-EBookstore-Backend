@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sjtu.rbj.bookstore.constant.Constant;
+import com.sjtu.rbj.bookstore.constant.Constants;
 
 
 /**
@@ -21,11 +21,11 @@ import com.sjtu.rbj.bookstore.constant.Constant;
  */
 @RestController
 public class ImageController {
-    @CrossOrigin(Constant.ALLOW_ORIGIN)
+    @CrossOrigin(Constants.ALLOW_ORIGIN)
     @GetMapping(value = "/images/{picName}", produces = MediaType.IMAGE_JPEG_VALUE)
     @Cacheable("images") /** provide a cacheable static source handler */
     public byte[] images(@PathVariable String picName) throws IOException {
-        ClassPathResource imgFile = new ClassPathResource(Constant.IMAGES_FOLDER + picName);
+        ClassPathResource imgFile = new ClassPathResource(Constants.IMAGES_FOLDER + picName);
         InputStream in = imgFile.getInputStream();
         return IOUtils.toByteArray(in);
     }

@@ -7,7 +7,7 @@
 2. 跳转到主页面，发送以下请求：
 
 - GET `/book?limit=x`：获取指定数量的书籍用于主页呈现。
-- GET `/user/{userId}`：获取用户基础信息 `UserInfo`（包含用户主键和当前操作的订单主键），存储在 context 中。
+- GET `/user?{account}`：获取用户基础信息 `UserInfo`（包含用户主键和当前操作的订单主键），存储在 context 中。
 
 3. 点击图书详情页，GET `/book/{uuid}` 获取某一本书籍的信息，呈现在页面。
 
@@ -92,6 +92,7 @@ TODO
   interface OrderInfo {
     readonly id: number; // 订单主键
     readonly time: Date; // 订单时间戳, Java 中为 java.sql.Timestamp
+    readonly orderState: string;
     readonly bookOrderedList: BookOrdered[];
   }
 

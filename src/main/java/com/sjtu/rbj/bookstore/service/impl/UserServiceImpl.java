@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sjtu.rbj.bookstore.constant.OrderStatus;
+import com.sjtu.rbj.bookstore.constant.OrderState;
 import com.sjtu.rbj.bookstore.dao.UserDao;
 import com.sjtu.rbj.bookstore.data.UserInfo;
 import com.sjtu.rbj.bookstore.entity.Order;
@@ -39,14 +39,14 @@ public class UserServiceImpl implements UserService {
 
         Order orderPending = null;
         for (Order order : orderList) {
-            if (OrderStatus.PENDING == order.getStatus()) {
+            if (OrderState.PENDING == order.getState()) {
                 orderPending = order;
                 break;
             }
         }
         if (orderPending == null) {
             orderPending = new Order();
-            orderPending.setStatus(OrderStatus.PENDING);
+            orderPending.setState(OrderState.PENDING);
             user.addOrder(orderPending);
             userDao.flush();
         }

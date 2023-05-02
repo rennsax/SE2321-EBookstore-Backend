@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson2.JSON;
-import com.sjtu.rbj.bookstore.constant.Constant;
+import com.sjtu.rbj.bookstore.constant.Constants;
 import com.sjtu.rbj.bookstore.data.UserInfo;
 import com.sjtu.rbj.bookstore.service.UserService;
 
@@ -27,7 +27,7 @@ class NoSuchUserException extends NoSuchElementException {
  */
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(Constant.ALLOW_ORIGIN)
+@CrossOrigin(Constants.ALLOW_ORIGIN)
 public class UserController {
 
     @Autowired
