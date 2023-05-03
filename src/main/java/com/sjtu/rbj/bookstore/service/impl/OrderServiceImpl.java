@@ -1,5 +1,7 @@
 package com.sjtu.rbj.bookstore.service.impl;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -65,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
             throw new UnsupportedOperationException();
         }
         order.setState(OrderState.TRANSPORTING);
+        order.setTime(Timestamp.from(Instant.now()));
     }
 
     @Override

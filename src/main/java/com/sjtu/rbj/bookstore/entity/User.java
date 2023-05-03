@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.ColumnDefault;
 
 import com.sjtu.rbj.bookstore.constant.UserType;
 
@@ -54,6 +55,10 @@ public class User {
     private UserType userType = UserType.NORMAL;
 
     private String name;
+
+    @Column(name = "avatar_id", columnDefinition = "CHAR(15)", nullable = false)
+    @ColumnDefault("default_user")
+    private String avatarId = "default_user";
 
     @OneToOne(cascade = { CascadeType.ALL })
     @JoinColumn(name = "account_id", unique = true, nullable = false)

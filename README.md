@@ -35,7 +35,7 @@
 - POST：输入用户名和密码尝试登录。请求体实现接口：
 
   ```typescript
-  interface LoginInfo {
+  type LoginInfo = {
     account: string;
     passwd: string;
   }
@@ -47,10 +47,12 @@
 - GET `/{userId}`：通过用户数据库主键 id 获得用户数据，响应体内容：
 
   ```typescript
-  interface UserInfo {
+  type UserInfo = {
     readonly id: number;
     orderId: number;
     // TODO
+    avatarId: number;
+    name: string;
   }
   ```
   `orderId` 字段存储的是当前会话正在进行的 "pending" 订单主键。
@@ -66,7 +68,7 @@ TODO
 
   ```typescript
   /** 这个接口基本和后端的 entity 一致 */
-  interface Book {
+  type Book = {
     readonly uuid: string; // primary key
     title: string;
     author: string;
@@ -89,14 +91,14 @@ TODO
 - GET `/{orderId}`：获取订单的全部信息，返回 JSON 数组，包含若干 JSON 对象，实现接口：
 
   ```typescript
-  interface OrderInfo {
+  type OrderInfo = {
     readonly id: number; // 订单主键
     readonly time: Date; // 订单时间戳, Java 中为 java.sql.Timestamp
     readonly orderState: string;
     readonly bookOrderedList: BookOrdered[];
   }
 
-  interface BookOrdered {
+  type BookOrdered = {
     readonly uuid: string;
     quantity: number;
   }

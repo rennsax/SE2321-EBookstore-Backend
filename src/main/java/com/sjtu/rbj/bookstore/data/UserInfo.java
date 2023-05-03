@@ -17,4 +17,7 @@ public class UserInfo {
      * Current order with statue "pending"
      */
     private Integer orderId;
+
+    private String name;
+    private String avatarId;
 }

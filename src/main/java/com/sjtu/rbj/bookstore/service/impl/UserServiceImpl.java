@@ -50,6 +50,6 @@ public class UserServiceImpl implements UserService {
             user.addOrder(orderPending);
             userDao.flush();
         }
-        return new UserInfo(user.getId(), orderPending.getId());
+        return new UserInfo(user.getId(), orderPending.getId(), user.getName(), user.getAvatarId());
     }
 }
