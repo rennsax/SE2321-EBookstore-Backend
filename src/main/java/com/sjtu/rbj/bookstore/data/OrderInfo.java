@@ -21,5 +21,6 @@ public class OrderInfo {
     private Integer id;
     private OrderState state;
     private Timestamp time;
+    private String sumBudget;
     private List<BookOrdered> bookOrderedList = new ArrayList<>();
 }

@@ -22,6 +22,7 @@ import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.entity.Order;
 import com.sjtu.rbj.bookstore.entity.Order.OrderItem;
 import com.sjtu.rbj.bookstore.service.OrderService;
+import com.sjtu.rbj.bookstore.utils.PriceHandler;
 
 /**
  * @author Bojun Ren
@@ -49,11 +50,16 @@ public class OrderServiceImpl implements OrderService {
 
         /** This list is a clone, not managed. */
         final List<OrderItem> orderItemList = order.getOrderItemList();
+        Integer sumBudget = 0;
         for (OrderItem orderItem : orderItemList) {
             Book book = orderItem.getBook();
-            BookOrdered bookOrdered = new BookOrdered(book.getUuid(), orderItem.getQuantity());
+            Integer totalBudget = orderItem.getQuantity() * book.getPriceCent();
+            BookOrdered bookOrdered = new BookOrdered(book.getUuid(), orderItem.getQuantity(),
+                    new PriceHandler(totalBudget).toString());
             bookOrderedList.add(bookOrdered);
+            sumBudget += totalBudget;
         }
+        orderInfo.setSumBudget(new PriceHandler(sumBudget).toString());
         orderInfo.setBookOrderedList(bookOrderedList);
         return orderInfo;
     }
@@ -83,10 +89,16 @@ public class OrderServiceImpl implements OrderService {
             }
             List<OrderItem> orderItemList = order.getOrderItemList();
             List<BookOrdered> bookOrderedList = new ArrayList<>();
+            Integer sumBudget = 0;
             for (OrderItem orderItem : orderItemList) {
-                bookOrderedList.add(new BookOrdered(orderItem.getBook().getUuid(), orderItem.getQuantity()));
+                Book book = orderItem.getBook();
+                Integer totalBudget = orderItem.getQuantity() * book.getPriceCent();
+                bookOrderedList.add(new BookOrdered(orderItem.getBook().getUuid(), orderItem.getQuantity(),
+                        new PriceHandler(totalBudget).toString()));
+                sumBudget += totalBudget;
             }
             res.add(new OrderInfo(order.getId() + Constants.ORDER_NUMBER_BIAS, order.getState(), order.getTime(),
+                    new PriceHandler(sumBudget).toString(),
                     bookOrderedList));
         }
         return res;

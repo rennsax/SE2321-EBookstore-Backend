@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.sjtu.rbj.bookstore.constant.OrderState;
 import com.sjtu.rbj.bookstore.dao.BookDao;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
@@ -216,20 +217,36 @@ class BookstoreApplicationTests {
     }
 
     // @Test
+    // @Transactional
     // TODO confusing yet
     void testUserAddOrder() {
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
+        // EntityTransaction transaction = entityManager.getTransaction();
+        // transaction.begin();
         System.out.println("=========");
         // initialEm();
         // User user = entityManager.find(User.class, 1);
         // User user = userRepository.findById(1).get();
-        User user = userRepository.findAll().get(0);
-        System.out.println(entityManager.contains(user));
+        User user = userRepository.findAll().get(1);
+        // System.out.println(entityManager.contains(user));
         System.out.println(user.getOrderList().size());
         System.out.println("=========");
-        transaction.commit();
+        // transaction.commit();
         // destroyEm();
+    }
+
+    @Test
+    void testPrice() {
+        Book book = bookRepository.findById(2).get();
+        assertEquals(6500, book.getPriceCent());
+
+        assertEquals(6500, bookRepository.findAll().get(1).getPriceCent());
+
+        assertEquals(6500, bookRepository.findWithLimitWithOffset(1, 1).get(0).getPriceCent());
+
+        JSONObject json = JSONObject.from(book);
+        json.put("sumBudget", 65);
+        json.remove("price");
+        System.out.println(json);
     }
 
 }

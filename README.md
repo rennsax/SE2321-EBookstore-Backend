@@ -72,7 +72,7 @@ TODO
     readonly uuid: string; // primary key
     title: string;
     author: string;
-    price: number;
+    price: string;
     picId: string;
     date: string;
     isbn: string;
@@ -95,12 +95,14 @@ TODO
     readonly id: number; // 订单主键
     readonly time: Date; // 订单时间戳, Java 中为 java.sql.Timestamp
     readonly orderState: string;
+    readonly sumBudget: string;
     readonly bookOrderedList: BookOrdered[];
   }
 
   type BookOrdered = {
     readonly uuid: string;
     quantity: number;
+    readonly totalBudget: string;
   }
   ```
 

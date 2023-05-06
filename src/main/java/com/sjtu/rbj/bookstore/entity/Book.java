@@ -1,7 +1,6 @@
 package com.sjtu.rbj.bookstore.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.UUID;
 
@@ -13,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.ColumnTransformer;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,8 +49,10 @@ public class Book implements Serializable {
     @Column(name = "pic_id", unique = true, columnDefinition = "CHAR(15)")
     private String picId;
 
-    @Column(columnDefinition = "DECIMAL(5, 2)")
-    private BigDecimal price;
+    @Column(name = "`price`", columnDefinition = "DECIMAL(5, 2)")
+    @ColumnTransformer(read = "100*price", write = "? / 100")
+    /** Store in unit cent. */
+    private Integer priceCent;
 
     private String author;
 

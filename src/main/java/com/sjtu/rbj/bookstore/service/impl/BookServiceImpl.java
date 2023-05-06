@@ -1,6 +1,7 @@
 package com.sjtu.rbj.bookstore.service.impl;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,21 +24,24 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
-    public Optional<Book> getBookByUuid(UUID uuid) {
-        return bookDao.findByUuid(uuid);
+    public Book getBookByUuid(UUID uuid) {
+        Optional<Book> maybeBook = bookDao.findByUuid(uuid);
+        Book book = maybeBook.orElseThrow(() -> new NoSuchElementException("cannot find such book!"));
+        return book;
     }
 
     @Override
     public List<Book> getBookListForHomePage(Integer limit) {
-        return this.getBookListForHomePage(limit, 0);
+        return this.getBookDataListForHomePage(limit, 0);
     }
 
     @Override
-    public List<Book> getBookListForHomePage(Integer limit, Integer offset) {
+    public List<Book> getBookDataListForHomePage(Integer limit, Integer offset) {
         /** resize limit */
         limit = Math.max(limit, 1);
         limit = Math.min(20, limit);
-        return bookDao.findWithLimitWithOffset(limit, offset);
+        List<Book> bookList = bookDao.findWithLimitWithOffset(limit, offset);
+        return bookList;
     }
 
 }

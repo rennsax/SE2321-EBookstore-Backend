@@ -16,4 +16,5 @@ import lombok.NoArgsConstructor;
 public class BookOrdered {
     private UUID uuid;
     private Integer quantity;
+    private String totalBudget;
 }

@@ -1,7 +1,7 @@
 package com.sjtu.rbj.bookstore.service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import com.sjtu.rbj.bookstore.entity.Book;
@@ -26,12 +26,15 @@ public interface BookService {
      * @param offset the beginning row number to get book information
      * @return {@code List<Book>}
      */
-    List<Book> getBookListForHomePage(Integer limit, Integer offset);
+    List<Book> getBookDataListForHomePage(Integer limit, Integer offset);
 
     /**
-     * get book information by uuid
-     * @param uuid the book uuid
-     * @return {@code Optional<Book>}
+     * Get a book's info by uuid.
+     *
+     * @param uuid must not be {@literal null}.
+     * @return the book entity.
+     * @throws NoSuchElementException if a book cannot be found.
+     * @throws IllegalArgumentException if the given {@literal uuid} is {@literal null}
      */
-    Optional<Book> getBookByUuid(UUID uuid);
+    Book getBookByUuid(UUID uuid);
 }

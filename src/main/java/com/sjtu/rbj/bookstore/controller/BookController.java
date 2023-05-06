@@ -1,7 +1,8 @@
 package com.sjtu.rbj.bookstore.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.sjtu.rbj.bookstore.constant.Constants;
+import com.sjtu.rbj.bookstore.data.BookData;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.service.BookService;
-
-import lombok.extern.slf4j.Slf4j;
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "no such book")
 class NoSuchBookException extends NoSuchElementException {
@@ -30,7 +30,6 @@ class NoSuchBookException extends NoSuchElementException {
  * @author Bojun Ren
  * @date 2023/04/18
  */
-@Slf4j
 @RestController
 @RequestMapping("/book")
 public class BookController {
@@ -40,20 +39,21 @@ public class BookController {
 
     @CrossOrigin(Constants.ALLOW_ORIGIN)
     @GetMapping
-    public String getBookListForHomePage(@RequestParam(defaultValue = "4") Integer limit, @RequestParam(defaultValue = "0") Integer offset) {
-        JSONArray res = new JSONArray(bookService.getBookListForHomePage(limit, offset));
-        log.info(Integer.toString(limit), Integer.toString(offset));
-        return res.toString();
+    public String getBookListForHomePage(@RequestParam(defaultValue = "4") Integer limit,
+            @RequestParam(defaultValue = "0") Integer offset) {
+        List<Book> bookList = bookService.getBookDataListForHomePage(limit, offset);
+        List<BookData> bookDataList = new ArrayList<>();
+        for (Book book : bookList) {
+            bookDataList.add(BookData.of(book));
+        }
+        JSONArray jsonArray = new JSONArray(bookDataList);
+        return jsonArray.toString();
     }
 
     @CrossOrigin(Constants.ALLOW_ORIGIN)
     @GetMapping("/{uuid}")
     public String getBook(@PathVariable("uuid") UUID uuid) {
-        log.info(uuid.toString());
-        Optional<Book> res = bookService.getBookByUuid(uuid);
-        if (!res.isPresent()) {
-            throw new NoSuchBookException();
-        }
-        return JSONObject.toJSONString(res.get());
+        Book book = bookService.getBookByUuid(uuid);
+        return JSON.toJSONString(BookData.of(book));
     }
 }
