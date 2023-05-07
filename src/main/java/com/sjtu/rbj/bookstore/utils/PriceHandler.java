@@ -11,6 +11,14 @@ public class PriceHandler {
     private Integer price;
     private Integer decimalPlace = 2;
 
+    public static PriceHandler of(Integer price) {
+        return new PriceHandler(price);
+    }
+
+    public static PriceHandler of(Integer price, Integer decimalPlace) {
+        return new PriceHandler(price, decimalPlace);
+    }
+
     /**
      * Create from the price only. The default decimal place is 2.
      * @param price
@@ -28,6 +36,14 @@ public class PriceHandler {
     public String toString() {
         String priceStr = price.toString();
         int integerPlace = priceStr.length() - decimalPlace;
+        if (integerPlace <= 0) {
+            String prefix = "0.";
+            while (integerPlace < 0) {
+                integerPlace++;
+                prefix += "0";
+            }
+            return prefix + priceStr.toString();
+        }
         return priceStr.substring(0, integerPlace) + "." + priceStr.substring(integerPlace);
     }
 }

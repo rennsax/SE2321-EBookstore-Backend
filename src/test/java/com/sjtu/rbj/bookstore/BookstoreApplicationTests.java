@@ -38,6 +38,7 @@ import com.sjtu.rbj.bookstore.repository.OrderRepository;
 import com.sjtu.rbj.bookstore.repository.UserRepository;
 import com.sjtu.rbj.bookstore.service.OrderService;
 import com.sjtu.rbj.bookstore.service.UserService;
+import com.sjtu.rbj.bookstore.utils.PriceHandler;
 
 @SpringBootTest
 class BookstoreApplicationTests {
@@ -247,6 +248,16 @@ class BookstoreApplicationTests {
         json.put("sumBudget", 65);
         json.remove("price");
         System.out.println(json);
+    }
+
+    @Test
+    void testPriceHandler() {
+        Integer price1 = 1;
+        assertEquals("0.01", PriceHandler.of(price1).toString());
+        assertEquals("0.001", PriceHandler.of(price1, 3).toString());
+        Integer price2 = 22;
+        assertEquals("0.22", PriceHandler.of(price2).toString());
+        assertEquals("2.2", PriceHandler.of(price2, 1).toString());
     }
 
 }

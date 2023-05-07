@@ -55,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
             Book book = orderItem.getBook();
             Integer totalBudget = orderItem.getQuantity() * book.getPriceCent();
             BookOrdered bookOrdered = new BookOrdered(book.getUuid(), orderItem.getQuantity(),
-                    new PriceHandler(totalBudget).toString());
+                    PriceHandler.of(totalBudget).toString());
             bookOrderedList.add(bookOrdered);
             sumBudget += totalBudget;
         }
@@ -94,11 +94,11 @@ public class OrderServiceImpl implements OrderService {
                 Book book = orderItem.getBook();
                 Integer totalBudget = orderItem.getQuantity() * book.getPriceCent();
                 bookOrderedList.add(new BookOrdered(orderItem.getBook().getUuid(), orderItem.getQuantity(),
-                        new PriceHandler(totalBudget).toString()));
+                        PriceHandler.of(totalBudget).toString()));
                 sumBudget += totalBudget;
             }
             res.add(new OrderInfo(order.getId() + Constants.ORDER_NUMBER_BIAS, order.getState(), order.getTime(),
-                    new PriceHandler(sumBudget).toString(),
+                    PriceHandler.of(sumBudget).toString(),
                     bookOrderedList));
         }
         return res;

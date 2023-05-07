@@ -33,7 +33,7 @@ public class BookData {
     public static BookData of(Book book) {
         return new BookData(book.getUuid(),
                 book.getTitle(), book.getPicId(),
-                new PriceHandler(book.getPriceCent()).toString(),
+                PriceHandler.of(book.getPriceCent()).toString(),
                 book.getAuthor(), book.getDate(), book.getIsbn(), book.getDescription());
     }
 
