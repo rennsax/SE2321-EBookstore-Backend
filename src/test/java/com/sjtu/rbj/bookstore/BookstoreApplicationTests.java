@@ -1,12 +1,16 @@
 package com.sjtu.rbj.bookstore;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,17 +22,22 @@ import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.sjtu.rbj.bookstore.constant.OrderState;
+import com.sjtu.rbj.bookstore.constant.UserType;
+import com.sjtu.rbj.bookstore.controller.LoginController;
+import com.sjtu.rbj.bookstore.controller.UserController;
 import com.sjtu.rbj.bookstore.dao.BookDao;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.dao.UserDao;
-import com.sjtu.rbj.bookstore.data.OrderInfo;
+import com.sjtu.rbj.bookstore.dto.OrderInfoDTO;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.entity.Order;
 import com.sjtu.rbj.bookstore.entity.Order.OrderItem;
@@ -92,8 +101,23 @@ class BookstoreApplicationTests {
     }
 
     @Test
+    @Transactional
+    @Rollback(true)
     public void testUserService() {
-        assertTrue(userService.enableLogin("cauchy@gmail.com", "123456"));
+        /** Can't ban the super user. */
+        assertThrows(UnsupportedOperationException.class, () -> {
+            userService.changeState(1, UserType.FORBIDDEN);
+        });
+        assertDoesNotThrow(() -> {
+            userService.changeState(2, UserType.FORBIDDEN);
+        });
+        /** Can't ban multiple times. */
+        assertFalse(userService.changeState(2, UserType.FORBIDDEN));
+
+        assertTrue(userService.changePasswdByAccount("cauchy@gmail.com", "hello"));
+        assertFalse(userService.login("cauchy@gmail.com", "123456").isPresent());
+        assertTrue(userService.login("cauchy@gmail.com", "hello").isPresent());
+        assertFalse(userService.changePasswdByAccount("bob@outlook.com", "abcdef"));
     }
 
     /**
@@ -125,7 +149,7 @@ class BookstoreApplicationTests {
     @Rollback(true)
     void testOrderService() {
         /** Test method: getOrderInfoByOrderId */
-        OrderInfo orderInfo = orderService.getOrderInfoByOrderId(1);
+        OrderInfoDTO orderInfo = orderService.getOrderInfoByOrderId(1);
         assertEquals(3, orderInfo.getBookOrderedList().size());
 
         /** Test method: updateOrder */
@@ -151,10 +175,7 @@ class BookstoreApplicationTests {
         /** Test method: submitOrder */
         orderService.submitOrder(4);
         assertEquals(OrderState.TRANSPORTING, orderDao.findById(2).get().getState());
-    }
 
-    @Test
-    void testException() {
         assertThrows(NoSuchElementException.class,
             () -> orderService.getOrderInfoByOrderId(5)
         );
@@ -217,24 +238,6 @@ class BookstoreApplicationTests {
         order1.addOrderItem(orderItem1);
     }
 
-    // @Test
-    // @Transactional
-    // TODO confusing yet
-    void testUserAddOrder() {
-        // EntityTransaction transaction = entityManager.getTransaction();
-        // transaction.begin();
-        System.out.println("=========");
-        // initialEm();
-        // User user = entityManager.find(User.class, 1);
-        // User user = userRepository.findById(1).get();
-        User user = userRepository.findAll().get(1);
-        // System.out.println(entityManager.contains(user));
-        System.out.println(user.getOrderList().size());
-        System.out.println("=========");
-        // transaction.commit();
-        // destroyEm();
-    }
-
     @Test
     void testPrice() {
         Book book = bookRepository.findById(2).get();
@@ -253,11 +256,53 @@ class BookstoreApplicationTests {
     @Test
     void testPriceHandler() {
         Integer price1 = 1;
-        assertEquals("0.01", PriceHandler.of(price1).toString());
+        assertEquals("0.01", PriceHandler.from(price1).toString());
         assertEquals("0.001", PriceHandler.of(price1, 3).toString());
         Integer price2 = 22;
-        assertEquals("0.22", PriceHandler.of(price2).toString());
+        assertEquals("0.22", PriceHandler.from(price2).toString());
         assertEquals("2.2", PriceHandler.of(price2, 1).toString());
+    }
+
+    @Autowired
+    ModelMapper modelMapper;
+
+    @Autowired
+    UserController userController;
+
+    @Autowired
+    LoginController loginController;
+
+    @Test
+    void testLoginController() {
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("account", "root");
+        requestBody.put("passwd", "root123");
+        ResponseEntity<?> response = loginController.checkLogin(requestBody);
+        JSONObject expectBody = new JSONObject();
+        expectBody.put("userType", UserType.SUPER);
+        assertEquals(expectBody, response.getBody());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    void testUserController() {
+        ResponseEntity<?> allUsersRes = userController.getAllUsers();
+        /** Check the DTO works right, no {@link LazyInitializationException} */
+        assertDoesNotThrow(() -> {
+            Object body = allUsersRes.getBody();
+            if (body == null) {
+                return;
+            }
+            body.toString();
+        });
+
+        assertDoesNotThrow(() -> {
+            userController.banUser(2);
+        });
+        User user = userDao.findById(2).get();
+        assertEquals(UserType.FORBIDDEN, user.getUserType());
+
     }
 
 }

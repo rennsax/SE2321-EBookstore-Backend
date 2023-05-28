@@ -12,17 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sjtu.rbj.bookstore.constant.Constants;
 import com.sjtu.rbj.bookstore.constant.OrderState;
 import com.sjtu.rbj.bookstore.dao.BookDao;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
-import com.sjtu.rbj.bookstore.data.BookOrdered;
-import com.sjtu.rbj.bookstore.data.OrderInfo;
+import com.sjtu.rbj.bookstore.dto.OrderInfoDTO;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.entity.Order;
 import com.sjtu.rbj.bookstore.entity.Order.OrderItem;
 import com.sjtu.rbj.bookstore.service.OrderService;
-import com.sjtu.rbj.bookstore.utils.PriceHandler;
 
 /**
  * @author Bojun Ren
@@ -37,31 +34,10 @@ public class OrderServiceImpl implements OrderService {
     private BookDao bookDao;
 
     @Override
-    public OrderInfo getOrderInfoByOrderId(Integer orderId) {
+    public OrderInfoDTO getOrderInfoByOrderId(Integer orderId) {
         Optional<Order> maybeOrder = orderDao.findById(orderId);
         Order order = maybeOrder.orElseThrow(() -> new NoSuchElementException("no such order!"));
-
-        OrderInfo orderInfo = new OrderInfo();
-        orderInfo.setId(orderId);
-        orderInfo.setTime(order.getTime());
-        orderInfo.setState(order.getState());
-
-        ArrayList<BookOrdered> bookOrderedList = new ArrayList<BookOrdered>();
-
-        /** This list is a clone, not managed. */
-        final List<OrderItem> orderItemList = order.getOrderItemList();
-        Integer sumBudget = 0;
-        for (OrderItem orderItem : orderItemList) {
-            Book book = orderItem.getBook();
-            Integer totalBudget = orderItem.getQuantity() * book.getPriceCent();
-            BookOrdered bookOrdered = new BookOrdered(book.getUuid(), orderItem.getQuantity(),
-                    PriceHandler.of(totalBudget).toString());
-            bookOrderedList.add(bookOrdered);
-            sumBudget += totalBudget;
-        }
-        orderInfo.setSumBudget(new PriceHandler(sumBudget).toString());
-        orderInfo.setBookOrderedList(bookOrderedList);
-        return orderInfo;
+        return OrderInfoDTO.from(order);
     }
 
     @Override
@@ -77,29 +53,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderInfo> getOrderByUserId(Integer userId) {
+    public List<Order> getOrderByUserId(Integer userId) {
         List<Order> orderList = orderDao.findByUserId(userId);
         orderList.sort((o1, o2) -> {
             return o1.getTime().compareTo(o2.getTime());
         });
-        List<OrderInfo> res = new ArrayList<>();
+        List<Order> res = new ArrayList<>();
         for (Order order : orderList) {
             if (order.getState() == OrderState.PENDING) {
                 continue;
             }
-            List<OrderItem> orderItemList = order.getOrderItemList();
-            List<BookOrdered> bookOrderedList = new ArrayList<>();
-            Integer sumBudget = 0;
-            for (OrderItem orderItem : orderItemList) {
-                Book book = orderItem.getBook();
-                Integer totalBudget = orderItem.getQuantity() * book.getPriceCent();
-                bookOrderedList.add(new BookOrdered(orderItem.getBook().getUuid(), orderItem.getQuantity(),
-                        PriceHandler.of(totalBudget).toString()));
-                sumBudget += totalBudget;
-            }
-            res.add(new OrderInfo(order.getId() + Constants.ORDER_NUMBER_BIAS, order.getState(), order.getTime(),
-                    PriceHandler.of(sumBudget).toString(),
-                    bookOrderedList));
+            res.add(order);
         }
         return res;
     }

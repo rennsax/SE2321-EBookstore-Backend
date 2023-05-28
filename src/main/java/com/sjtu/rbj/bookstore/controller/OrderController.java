@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.sjtu.rbj.bookstore.constant.Constants;
-import com.sjtu.rbj.bookstore.data.OrderInfo;
+import com.sjtu.rbj.bookstore.dto.OrderInfoDTO;
+import com.sjtu.rbj.bookstore.entity.Order;
 import com.sjtu.rbj.bookstore.service.OrderService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RestController
-@RequestMapping(path = "/order**")
+@RequestMapping(path = "/order")
 @CrossOrigin(Constants.ALLOW_ORIGIN)
 public class OrderController {
 
@@ -53,7 +55,7 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     public String getOrderInfo(@PathVariable Integer orderId) {
-        OrderInfo orderInfo = orderService.getOrderInfoByOrderId(orderId);
+        OrderInfoDTO orderInfo = orderService.getOrderInfoByOrderId(orderId);
         return JSON.toJSONString(orderInfo);
     }
 
@@ -82,7 +84,11 @@ public class OrderController {
      */
     @GetMapping
     public String getAllOrderByUserId(@RequestParam("userId") Integer userId) {
-        List<OrderInfo> orderInfoList = orderService.getOrderByUserId(userId);
-        return JSON.toJSONString(orderInfoList);
+        List<Order> orderInfoList = orderService.getOrderByUserId(userId);
+        JSONArray jsonArray = new JSONArray();
+        for (Order order : orderInfoList) {
+            jsonArray.add(OrderInfoDTO.from(order));
+        }
+        return jsonArray.toString();
     }
 }

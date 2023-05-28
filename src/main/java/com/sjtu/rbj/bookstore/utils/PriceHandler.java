@@ -11,7 +11,7 @@ public class PriceHandler {
     private Integer price;
     private Integer decimalPlace = 2;
 
-    public static PriceHandler of(Integer price) {
+    public static PriceHandler from(Integer price) {
         return new PriceHandler(price);
     }
 

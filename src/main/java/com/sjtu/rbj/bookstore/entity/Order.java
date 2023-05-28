@@ -117,7 +117,7 @@ public class Order {
         /** unidirectional association */
         @OneToOne
         @JoinColumn(
-            name = "item_id",
+            name = "`item_id`",
             referencedColumnName = "`uuid`",
             foreignKey = @ForeignKey(name = "item_uuid_fk")
         )

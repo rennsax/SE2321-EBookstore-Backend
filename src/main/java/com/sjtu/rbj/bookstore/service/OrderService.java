@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import com.sjtu.rbj.bookstore.data.OrderInfo;
+import com.sjtu.rbj.bookstore.dto.OrderInfoDTO;
+import com.sjtu.rbj.bookstore.entity.Order;
 
 /**
  * @author Bojun Ren
@@ -19,7 +20,7 @@ public interface OrderService {
 	 * @throws IllegalArgumentException if {@literal id} is {@literal null}.
      * @throws NoSuchElementException if no such order.
      */
-    OrderInfo getOrderInfoByOrderId(Integer orderId);
+    OrderInfoDTO getOrderInfoByOrderId(Integer orderId);
 
     /**
      * Submit a "pending" order.
@@ -42,7 +43,7 @@ public interface OrderService {
      * @return all orders (except a "pending" order) belonging to the user, packed as {@code OrderInfo}
 	 * @throws IllegalArgumentException if {@literal userId} is {@literal null}.
      */
-    List<OrderInfo> getOrderByUserId(Integer userId);
+    List<Order> getOrderByUserId(Integer userId);
 
     /**
      * Update the ordered item(s). Only "pending" orders' items can be updated.

@@ -2,7 +2,7 @@
 
 ### 基础逻辑
 
-1. 用户登录，发送 POST 请求到后端 `/login` 路径。若响应体为真，此时后端需要建立 Session/Cookie，client 端继续下一步。
+1. 用户登录，发送 POST 请求到后端 `/login` 路径。Response 正常，此时后端需要建立 Session/Cookie，client 端继续下一步。
 
 2. 跳转到主页面，发送以下请求：
 
@@ -40,7 +40,14 @@
     passwd: string;
   }
   ```
-  返回两种 status code: 204 (No Content) or 401 (Unauthorized)。
+  返回两种 status code: 200 (OK) or 401 (Unauthorized)。
+  返回 OK 时，response body 包含当前用户类型：
+
+  ```typescript
+  type LoginResponseBody = {
+    type: "SUPER" | "FORBIDDEN" | "NORMAL";
+  }
+  ```
 
 ### 用户信息 `/user`
 
@@ -50,12 +57,11 @@
   type UserInfo = {
     readonly id: number;
     orderId: number;
-    // TODO
     avatarId: number;
     name: string;
   }
   ```
-  `orderId` 字段存储的是当前会话正在进行的 "pending" 订单主键。
+  `orderId` 字段存储的是当前会话正在进行的 "pending" 订单主键，也就是购物车。每个用户必定会有一个对应购物车的订单，否则会在请求中创建。
 
 - GET `?account=...`：通过用户账号 (unique) 获取用户数据，响应体内容同上。
 
@@ -72,7 +78,7 @@ TODO
     readonly uuid: string; // primary key
     title: string;
     author: string;
-    price: string;
+    price: string; // in case of loss
     picId: string;
     date: string;
     isbn: string;

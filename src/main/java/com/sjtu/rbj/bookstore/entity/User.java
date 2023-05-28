@@ -42,7 +42,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Table(name = "`user`")
-@Check(constraints = "`user_type` in ('NORMAL', 'SUPER')")
+@Check(constraints = "`user_type` in ('NORMAL', 'SUPER', 'FORBIDDEN')")
 public class User {
 
     @Id
@@ -57,7 +57,7 @@ public class User {
     private String name;
 
     @Column(name = "avatar_id", columnDefinition = "CHAR(15)", nullable = false)
-    @ColumnDefault("default_user")
+    @ColumnDefault("'default_user'")
     private String avatarId = "default_user";
 
     @OneToOne(cascade = { CascadeType.ALL })

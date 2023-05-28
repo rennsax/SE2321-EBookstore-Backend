@@ -13,5 +13,10 @@ public enum UserType {
     /**
      * super user
      */
-    SUPER;
+    SUPER,
+
+    /**
+     * Forbidden
+     */
+    FORBIDDEN;
 }

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.sjtu.rbj.bookstore.constant.Constants;
-import com.sjtu.rbj.bookstore.data.BookData;
+import com.sjtu.rbj.bookstore.dto.BookDTO;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.service.BookService;
 
@@ -32,28 +33,32 @@ class NoSuchBookException extends NoSuchElementException {
  */
 @RestController
 @RequestMapping("/book")
+@CrossOrigin(Constants.ALLOW_ORIGIN)
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
-
-    @CrossOrigin(Constants.ALLOW_ORIGIN)
     @GetMapping
     public String getBookListForHomePage(@RequestParam(defaultValue = "4") Integer limit,
             @RequestParam(defaultValue = "0") Integer offset) {
         List<Book> bookList = bookService.getBookDataListForHomePage(limit, offset);
-        List<BookData> bookDataList = new ArrayList<>();
+        List<BookDTO> bookDataList = new ArrayList<>();
         for (Book book : bookList) {
-            bookDataList.add(BookData.of(book));
+            bookDataList.add(BookDTO.from(book));
         }
         JSONArray jsonArray = new JSONArray(bookDataList);
         return jsonArray.toString();
     }
 
-    @CrossOrigin(Constants.ALLOW_ORIGIN)
     @GetMapping("/{uuid}")
-    public String getBook(@PathVariable("uuid") UUID uuid) {
-        Book book = bookService.getBookByUuid(uuid);
-        return JSON.toJSONString(BookData.of(book));
+    public ResponseEntity<?> getBook(@PathVariable("uuid") UUID uuid) {
+        try {
+            Book book = bookService.getBookByUuid(uuid);
+            return ResponseEntity.ok().body(JSON.toJSON(BookDTO.from(book)));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
+
+    @Autowired
+    private BookService bookService;
+
 }

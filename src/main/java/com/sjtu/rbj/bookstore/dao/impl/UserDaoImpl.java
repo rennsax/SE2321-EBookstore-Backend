@@ -1,5 +1,6 @@
 package com.sjtu.rbj.bookstore.dao.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,16 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void flush() {
         repository.flush();
+    }
+
+    @Override
+    public List<User> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Optional<User> findById(Integer id) {
+        return repository.findById(id);
     }
 
 }
