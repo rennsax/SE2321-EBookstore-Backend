@@ -1,4 +1,4 @@
-package com.sjtu.rbj.bookstore.utils;
+package com.sjtu.rbj.bookstore.dto;
 
 /**
  * An util class to handle the price.

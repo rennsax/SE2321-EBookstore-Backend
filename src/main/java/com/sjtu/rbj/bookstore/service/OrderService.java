@@ -60,5 +60,5 @@ public interface OrderService {
      * @throws NoSuchElementException if no such order or no such book.
      * @throws UnsupportedOperationException if the target order isn't "pending".
      */
-    boolean updateOrder(Integer orderId, UUID uuid, Integer quantity);
+    Boolean updateOrder(Integer orderId, UUID uuid, Integer quantity);
 }

@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sjtu.rbj.bookstore.constant.OrderState;
-import com.sjtu.rbj.bookstore.constant.UserType;
 import com.sjtu.rbj.bookstore.dao.UserDao;
 import com.sjtu.rbj.bookstore.dto.UserInfoDTO;
 import com.sjtu.rbj.bookstore.entity.Order;
+import com.sjtu.rbj.bookstore.entity.OrderState;
 import com.sjtu.rbj.bookstore.entity.User;
+import com.sjtu.rbj.bookstore.entity.UserType;
 import com.sjtu.rbj.bookstore.entity.User.UserAccount;
 import com.sjtu.rbj.bookstore.service.UserService;
 
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean enableLogin(String account, String passwd) {
+    public Boolean enableLogin(String account, String passwd) {
         Optional<User> maybeUser = userDao.findByAccountAndPasswd(account, passwd);
         return maybeUser.isPresent();
     }
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean changeState(Integer id, UserType state) {
+    public Boolean changeState(Integer id, UserType state) {
         Optional<User> maybeUser = userDao.findById(id);
         User user = maybeUser.orElseThrow(() -> new NoSuchElementException("Cannot find such user!"));
         if (user.getUserType() == UserType.SUPER) {
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean changePasswdByAccount(String account, String newPasswd) {
+    public Boolean changePasswdByAccount(String account, String newPasswd) {
         Optional<User> maybeUser = userDao.findByAccount(account);
         User user = maybeUser.orElseThrow(() -> new NoSuchElementException("No such account!"));
         return changePasswdByUser(user, newPasswd);
@@ -104,13 +104,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean changePasswdById(Integer id, String newPasswd) {
+    public Boolean changePasswdById(Integer id, String newPasswd) {
         Optional<User> maybeUser = userDao.findById(id);
         User user = maybeUser.orElseThrow(() -> new NoSuchElementException("No such account!"));
         return changePasswdByUser(user, newPasswd);
     }
 
-    private boolean changePasswdByUser(User user, String newPasswd) {
+    private Boolean changePasswdByUser(User user, String newPasswd) {
         UserAccount userAccount = user.getUserAccount();
         /** Reject same passwd */
         if (userAccount.getPasswd().equals(newPasswd)) {

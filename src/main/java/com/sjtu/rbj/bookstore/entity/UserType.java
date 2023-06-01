@@ -1,4 +1,4 @@
-package com.sjtu.rbj.bookstore.constant;
+package com.sjtu.rbj.bookstore.entity;
 
 /**
  * @author Bojun Ren

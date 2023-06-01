@@ -22,10 +22,10 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.sjtu.rbj.bookstore.annotation.Administer;
 import com.sjtu.rbj.bookstore.constant.Constants;
-import com.sjtu.rbj.bookstore.constant.UserType;
 import com.sjtu.rbj.bookstore.dto.UserForAdminDTO;
 import com.sjtu.rbj.bookstore.dto.UserInfoDTO;
 import com.sjtu.rbj.bookstore.entity.User;
+import com.sjtu.rbj.bookstore.entity.UserType;
 import com.sjtu.rbj.bookstore.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +34,14 @@ import lombok.extern.slf4j.Slf4j;
 class NoSuchUserException extends NoSuchElementException {
 }
 
+// TODO: fix this controller
 /**
  * @author Bojun Ren
  * @data 2023/04/23
  */
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @CrossOrigin(Constants.ALLOW_ORIGIN)
 public class UserController {
 

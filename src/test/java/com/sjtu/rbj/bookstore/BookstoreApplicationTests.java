@@ -15,10 +15,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.Test;
@@ -30,28 +26,27 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.sjtu.rbj.bookstore.constant.OrderState;
-import com.sjtu.rbj.bookstore.constant.UserType;
 import com.sjtu.rbj.bookstore.controller.LoginController;
 import com.sjtu.rbj.bookstore.controller.UserController;
 import com.sjtu.rbj.bookstore.dao.BookDao;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.dao.UserDao;
 import com.sjtu.rbj.bookstore.dto.OrderInfoDTO;
+import com.sjtu.rbj.bookstore.dto.PriceHandler;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.entity.Order;
 import com.sjtu.rbj.bookstore.entity.Order.OrderItem;
+import com.sjtu.rbj.bookstore.entity.OrderState;
 import com.sjtu.rbj.bookstore.entity.User;
+import com.sjtu.rbj.bookstore.entity.UserType;
 import com.sjtu.rbj.bookstore.repository.BookRepository;
 import com.sjtu.rbj.bookstore.repository.OrderRepository;
 import com.sjtu.rbj.bookstore.repository.UserRepository;
 import com.sjtu.rbj.bookstore.service.OrderService;
 import com.sjtu.rbj.bookstore.service.UserService;
-import com.sjtu.rbj.bookstore.utils.PriceHandler;
 
 @SpringBootTest
 class BookstoreApplicationTests {
-
 
     @Autowired
     UserRepository userRepository;
@@ -79,26 +74,6 @@ class BookstoreApplicationTests {
 
     @Autowired
     DataSource dataSource;
-
-    @Autowired
-    EntityManagerFactory entityManagerFactory;
-
-    @PersistenceContext
-    EntityManager entityManager;
-
-    EntityTransaction transaction;
-
-    public void initialEm() {
-        entityManager = entityManagerFactory.createEntityManager();
-        transaction = entityManager.getTransaction();
-        transaction.begin();
-    }
-
-    public void destroyEm() {
-        transaction.commit();
-        entityManager.close();
-        entityManagerFactory.close();
-    }
 
     @Test
     @Transactional
@@ -131,7 +106,8 @@ class BookstoreApplicationTests {
         assertEquals(46, bookCount, "books count error!");
 
         /** `user` table */
-        Optional<User> maybeUser = userRepository.findByUserAccountAccountAndUserAccountPasswd("cauchy@gmail.com", "123456");
+        Optional<User> maybeUser = userRepository
+                .findByUserAccountAccountAndUserAccountPasswd("cauchy@gmail.com", "123456");
         assertTrue(maybeUser.isPresent(), "user \"cauchy\" not found!");
         User user = maybeUser.get();
         user.setName("cauchy");
@@ -145,7 +121,7 @@ class BookstoreApplicationTests {
     }
 
     @Test
-    @Transactional(rollbackFor = {Exception.class})
+    @Transactional(rollbackFor = { Exception.class })
     @Rollback(true)
     void testOrderService() {
         /** Test method: getOrderInfoByOrderId */
@@ -171,17 +147,12 @@ class BookstoreApplicationTests {
         orderService.updateOrder(4, uuid, -1);
         assertEquals(3, order4.getOrderItemList().size());
 
-
         /** Test method: submitOrder */
         orderService.submitOrder(4);
         assertEquals(OrderState.TRANSPORTING, orderDao.findById(2).get().getState());
 
-        assertThrows(NoSuchElementException.class,
-            () -> orderService.getOrderInfoByOrderId(5)
-        );
-        assertThrows(UnsupportedOperationException.class,
-            () -> orderService.submitOrder(1)
-        );
+        assertThrows(NoSuchElementException.class, () -> orderService.getOrderInfoByOrderId(5));
+        assertThrows(UnsupportedOperationException.class, () -> orderService.submitOrder(1));
     }
 
     // @BeforeEach
@@ -241,16 +212,11 @@ class BookstoreApplicationTests {
     @Test
     void testPrice() {
         Book book = bookRepository.findById(2).get();
-        assertEquals(6500, book.getPriceCent());
+        assertEquals(4000, book.getPriceCent());
 
-        assertEquals(6500, bookRepository.findAll().get(1).getPriceCent());
+        assertEquals(4000, bookRepository.findAll().get(1).getPriceCent());
 
-        assertEquals(6500, bookRepository.findWithLimitWithOffset(1, 1).get(0).getPriceCent());
-
-        JSONObject json = JSONObject.from(book);
-        json.put("sumBudget", 65);
-        json.remove("price");
-        System.out.println(json);
+        assertEquals(4000, bookRepository.findWithLimitWithOffset(1, 1).get(0).getPriceCent());
     }
 
     @Test

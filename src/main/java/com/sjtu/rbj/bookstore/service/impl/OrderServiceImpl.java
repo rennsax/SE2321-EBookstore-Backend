@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sjtu.rbj.bookstore.constant.OrderState;
 import com.sjtu.rbj.bookstore.dao.BookDao;
 import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.dto.OrderInfoDTO;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.entity.Order;
+import com.sjtu.rbj.bookstore.entity.OrderState;
 import com.sjtu.rbj.bookstore.entity.Order.OrderItem;
 import com.sjtu.rbj.bookstore.service.OrderService;
 
@@ -70,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateOrder(Integer orderId, UUID uuid, Integer quantity) {
+    public Boolean updateOrder(Integer orderId, UUID uuid, Integer quantity) {
         if (orderId == null || uuid == null || quantity == null) {
             throw new IllegalArgumentException("null parameters are not permitted!");
         }

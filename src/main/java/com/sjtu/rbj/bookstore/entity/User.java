@@ -23,8 +23,6 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.ColumnDefault;
 
-import com.sjtu.rbj.bookstore.constant.UserType;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -107,14 +105,14 @@ public class User {
     @OrderBy("`time` desc")
     private List<Order> orderList = new ArrayList<>();
 
-    public boolean addOrder(Order order) {
-        boolean isAdded = orderList.add(order);
+    public Boolean addOrder(Order order) {
+        Boolean isAdded = orderList.add(order);
         order.setUser(this);
         return isAdded;
     }
 
-    public boolean removeOrder(Order order) {
-        boolean isRemoved = this.orderList.remove(order);
+    public Boolean removeOrder(Order order) {
+        Boolean isRemoved = this.orderList.remove(order);
         if (isRemoved) {
             order.setUser(null);
         }

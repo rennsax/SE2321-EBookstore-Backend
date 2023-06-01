@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import com.sjtu.rbj.bookstore.constant.UserType;
 import com.sjtu.rbj.bookstore.dto.UserInfoDTO;
 import com.sjtu.rbj.bookstore.entity.User;
+import com.sjtu.rbj.bookstore.entity.UserType;
 
 /**
  * @author Bojun Ren
@@ -27,15 +27,14 @@ public interface UserService {
      * @see {@link com.sjtu.rbj.bookstore.service.UserService#login}
      */
     @Deprecated
-    boolean enableLogin(String account, String passwd);
+    Boolean enableLogin(String account, String passwd);
 
 
     /**
      * Verify account and password, together with the user type.
      * @param account must not be {@literal null}.
      * @param passwd must not be {@literal null}.
-     * @return {@code null} if the account or passwd is wrong.
-     * @throws {@code IllegalArgumentException}
+     * @return {@code null} if the account or passwd is wrong, else the user's type.
      */
     Optional<UserType> login(String account, String passwd);
 
@@ -56,7 +55,7 @@ public interface UserService {
      * @throws UnsupportedOperationException if the target user is a super user.
      * @throws NoSuchElementException if the user doesn't exist.
      */
-    boolean changeState(Integer id, UserType state);
+    Boolean changeState(Integer id, UserType state);
 
     /**
      * Change passwd by account.
@@ -67,7 +66,7 @@ public interface UserService {
      * @throws IllegalArgumentException if {@literal account} is {@literal null}.
      * @throws NoSuchElementException if the account doesn't exist.
      */
-    boolean changePasswdByAccount(String account, String newPasswd);
+    Boolean changePasswdByAccount(String account, String newPasswd);
 
     /**
      * Change passwd by user id.
@@ -78,5 +77,5 @@ public interface UserService {
      * @throws IllegalArgumentException if {@literal id} is {@literal null}.
      * @throws NoSuchElementException if the user doesn't exist.
      */
-    boolean changePasswdById(Integer id, String newPasswd);
+    Boolean changePasswdById(Integer id, String newPasswd);
 }

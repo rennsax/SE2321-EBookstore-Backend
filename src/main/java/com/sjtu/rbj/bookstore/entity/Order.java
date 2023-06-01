@@ -25,8 +25,6 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
-import com.sjtu.rbj.bookstore.constant.OrderState;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -73,14 +71,14 @@ public class Order {
     )
     private List<OrderItem> orderItemList = new ArrayList<>();
 
-    public boolean addOrderItem(OrderItem orderItem) {
-        boolean isAdded = this.orderItemList.add(orderItem);
+    public Boolean addOrderItem(OrderItem orderItem) {
+        Boolean isAdded = this.orderItemList.add(orderItem);
         orderItem.setOrder(this);
         return isAdded;
     }
 
-    public boolean removeOrderItem(OrderItem orderItem) {
-        boolean isRemoved = this.orderItemList.remove(orderItem);
+    public Boolean removeOrderItem(OrderItem orderItem) {
+        Boolean isRemoved = this.orderItemList.remove(orderItem);
         if (isRemoved) {
             orderItem.setOrder(null);
         }

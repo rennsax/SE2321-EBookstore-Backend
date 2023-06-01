@@ -1,6 +1,6 @@
 package com.sjtu.rbj.bookstore.dto;
 
-import com.sjtu.rbj.bookstore.constant.UserType;
+import com.sjtu.rbj.bookstore.entity.UserType;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

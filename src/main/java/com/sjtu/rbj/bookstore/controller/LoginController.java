@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.sjtu.rbj.bookstore.constant.Constants;
-import com.sjtu.rbj.bookstore.constant.UserType;
+import com.sjtu.rbj.bookstore.entity.UserType;
 import com.sjtu.rbj.bookstore.service.UserService;
 
 @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Wrong account or password!")

@@ -4,12 +4,13 @@ import java.sql.Date;
 import java.util.UUID;
 
 import com.sjtu.rbj.bookstore.entity.Book;
-import com.sjtu.rbj.bookstore.utils.PriceHandler;
 
 import lombok.Getter;
 import lombok.ToString;
 
 /**
+ * In fact, this DTO just transfer the price field into String.
+ *
  * @author Bojun Ren
  * @data 2023/05/07
  */
