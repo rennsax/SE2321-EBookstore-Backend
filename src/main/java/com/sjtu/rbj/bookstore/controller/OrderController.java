@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sjtu.rbj.bookstore.constant.Constants;
@@ -43,29 +43,38 @@ public class OrderController {
 
     /**
      * Handle the request to update an order, including add or delete some ordered
-     * books for the order. The request body should contains {@code uuid} and
-     * {@code quantity}.
+     * books for the order. The request body should contains {@code uuid} and {@code quantity}.
      */
     @PatchMapping("/{orderId}")
-    public ResponseEntity<String> updateOrder(@PathVariable Integer orderId,
-            @RequestBody OrderRequestBody body) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateOrder(@PathVariable Integer orderId, @RequestBody OrderRequestBody body) {
+
         if (OrderRequestBody.OP_UPDATE.equals(body.getOp())) {
-            List<BookOrdered> bookOrderedList = body.getBookOrderedList();
-            if (bookOrderedList == null) {
-                return ResponseEntity.badRequest().body("Please provide bookOrdered info.");
+            // OP: update items
+            BookOrdered bookOrdered = body.getBookOrdered();
+
+            if (bookOrdered == null) {
+                throw new IncompleteRequestBodyException("Please provide bookOrdered info");
             }
-            for (BookOrdered bookOrdered : bookOrderedList) {
-                if (bookOrdered.getUuid() == null || bookOrdered.getQuantity() == null) {
-                    return ResponseEntity.badRequest().body("bookOrdered information incomplete");
-                }
-                orderService.updateOrder(orderId, bookOrdered.getUuid(), bookOrdered.getQuantity());
+            // Check if the request body is complete
+            if (bookOrdered.getUuid() == null || bookOrdered.getQuantity() == null) {
+                throw new IncompleteRequestBodyException("Incomplete bookOrdered info");
             }
+
+            Boolean successUpdate = orderService.updateOrder(orderId, bookOrdered.getUuid(),
+                    bookOrdered.getQuantity());
+            if (!successUpdate) {
+                throw new UnsupportedOperationException("Update items failed!");
+            }
+
         } else if (OrderRequestBody.OP_CHECKOUT.equals(body.getOp())) {
+            // OP: checkout (ignore other fields)
             orderService.submitOrder(orderId);
+
         } else {
-            return ResponseEntity.badRequest().body("Unknown operation type.");
+            // OP: any other op (invalid)
+            throw new IncompleteRequestBodyException("Unknown operation");
         }
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping
@@ -81,10 +90,8 @@ public class OrderController {
     @Getter
     @AllArgsConstructor
     static public class OrderRequestBody {
-        @Nullable
         private String op;
-        @Nullable
-        private List<BookOrdered> bookOrderedList;
+        private BookOrdered bookOrdered;
 
         public static final String OP_UPDATE = "update items";
         public static final String OP_CHECKOUT = "checkout";

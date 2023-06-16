@@ -2,6 +2,7 @@ package com.sjtu.rbj.bookstore.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sjtu.rbj.bookstore.constant.Constants;
+import com.sjtu.rbj.bookstore.dto.ApiErrorResponse;
 import com.sjtu.rbj.bookstore.dto.BookDTO;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.service.BookService;
@@ -40,12 +42,13 @@ public class BookController {
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<BookDTO> getBook(@PathVariable("uuid") UUID uuid) {
+    public ResponseEntity<?> getBookByUuid(@PathVariable("uuid") UUID uuid) {
         try {
             Book book = bookService.getBookByUuid(uuid);
             return ResponseEntity.ok().body(BookDTO.from(book));
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (NoSuchElementException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiErrorResponse.builder()
+                    .errorCode("B0320").errorMessage(ex.getMessage()).build());
         }
     }
 

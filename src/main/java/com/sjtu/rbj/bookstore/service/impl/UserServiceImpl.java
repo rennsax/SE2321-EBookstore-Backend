@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
     private ModelMapper modelMapper;
 
     @Override
-    @Transactional(rollbackFor = Exception.class, readOnly = true)
     public List<User> getAllUsers() {
         return userDao.findAll();
     }
@@ -47,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoDTO getUserInfoByAccount(String account) {
         Optional<User> maybeUser = userDao.findByAccount(account);
-        User user = maybeUser.orElseThrow(() -> new NoSuchElementException("Cannot find such account!"));
+        User user = maybeUser.orElseThrow(() -> new NoSuchElementException("No such account!"));
         List<Order> orderList = user.getOrderList();
 
         Integer orderId = null;
@@ -83,7 +82,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean changeState(Integer id, UserType state) {
         Optional<User> maybeUser = userDao.findById(id);
-        User user = maybeUser.orElseThrow(() -> new NoSuchElementException("Cannot find such user!"));
+        User user = maybeUser.orElseThrow(() -> new NoSuchElementException("No such user!"));
         if (user.getUserType() == UserType.SUPER) {
             throw new UnsupportedOperationException("Can't change the state of a super user!");
         }

@@ -71,8 +71,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean updateOrder(Integer orderId, UUID uuid, Integer quantity) {
+        if (quantity == 0) {
+            // Meaningless parameter
+            return false;
+        }
         if (orderId == null || uuid == null || quantity == null) {
-            throw new IllegalArgumentException("null parameters are not permitted!");
+            throw new IllegalArgumentException("Null parameters are not permitted!");
         }
         Optional<Order> maybeOrder = orderDao.findById(orderId);
         Order order = maybeOrder.orElseThrow(() -> new NoSuchElementException("no such order!"));
@@ -94,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (targetOrderItem == null) {
-            if (quantity <= 0) {
+            if (quantity < 0) {
                 return false;
             }
             targetOrderItem = new OrderItem();

@@ -53,19 +53,7 @@
 
 ### 用户信息 `/user`
 
-- GET `/{userId}`：通过用户数据库主键 id 获得用户数据，响应体内容：
-
-  ```typescript
-  type UserInfo = {
-    readonly id: number;
-    orderId: number;
-    avatarId: number;
-    name: string;
-  }
-  ```
-  `orderId` 字段存储的是当前会话正在进行的 "pending" 订单主键，也就是购物车。每个用户必定会有一个对应购物车的订单，否则会在请求中创建。
-
-- GET `?account=...`：通过用户账号 (unique) 获取用户数据，响应体内容同上。
+暂时没有固定，等到后期加入了安全相关功能后再确定。
 
 ### 书籍操作 `/books`
 

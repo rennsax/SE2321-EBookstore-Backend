@@ -47,10 +47,11 @@ public interface UserService {
     UserInfoDTO getUserInfoByAccount(String account);
 
     /**
-     * Change a user's state (type) by its id aka. primary key.
+     * Change a user's state (type) by its id, i.e. primary key.
      * @param id must not be {@literal null}.
      * @param state
      * @return true on success. Iff the user's state equals {@literal state}, return false.
+     *         Any failure when implementing the operation will throw an exception.
      * @throws IllegalArgumentException if {@literal id} is {@literal null}.
      * @throws UnsupportedOperationException if the target user is a super user.
      * @throws NoSuchElementException if the user doesn't exist.
