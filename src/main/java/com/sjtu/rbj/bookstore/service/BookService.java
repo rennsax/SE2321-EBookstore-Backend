@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import com.sjtu.rbj.bookstore.dto.BookDTO;
 import com.sjtu.rbj.bookstore.entity.Book;
 
 /**
@@ -37,4 +38,16 @@ public interface BookService {
      * @throws IllegalArgumentException if the given {@literal uuid} is {@literal null}
      */
     Book getBookByUuid(UUID uuid);
+
+    /**
+     * Get all books from the database.
+     * @return list of book entities.
+     */
+    List<Book> getAllBooks();
+
+    /**
+     * Update the book.
+     * @param bookDTO
+     */
+    void updateBook(BookDTO bookDTO);
 }

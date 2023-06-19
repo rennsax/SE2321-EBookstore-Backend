@@ -24,9 +24,7 @@ public interface OrderService {
 
     /**
      * Submit a "pending" order.
-     *
-     * <p>In fact, this process change the order's state
-     * from "pending" to "transporting".</p>
+     * This process change the order state, and decrease corresponded book stock.
      *
      * @param orderId must not be {@literal null}.
 	 * @throws IllegalArgumentException if {@literal id} is {@literal null}.

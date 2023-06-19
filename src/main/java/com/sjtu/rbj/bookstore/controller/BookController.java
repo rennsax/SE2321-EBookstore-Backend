@@ -10,21 +10,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sjtu.rbj.bookstore.annotation.Administer;
 import com.sjtu.rbj.bookstore.constant.Constants;
 import com.sjtu.rbj.bookstore.dto.ApiErrorResponse;
 import com.sjtu.rbj.bookstore.dto.BookDTO;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.service.BookService;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Bojun Ren
  * @date 2023/04/18
  */
+@Slf4j
 @RestController
 @RequestMapping("/books")
 @CrossOrigin(Constants.ALLOW_ORIGIN)
@@ -38,6 +45,24 @@ public class BookController {
         for (Book book : bookList) {
             bookDataList.add(BookDTO.from(book));
         }
+        return bookDataList;
+    }
+
+    @PatchMapping("/{uuid}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateBook(@RequestBody BookDTO bookDTO) {
+        bookService.updateBook(bookDTO);
+    }
+
+    @Administer
+    @GetMapping("/all")
+    public List<BookDTO> getAllBooks() {
+        List<Book> allBooks = bookService.getAllBooks();
+        List<BookDTO> bookDataList = new ArrayList<>();
+        for (Book book : allBooks) {
+            bookDataList.add(BookDTO.from(book));
+        }
+        log.info("Return {} books.", bookDataList.size());
         return bookDataList;
     }
 

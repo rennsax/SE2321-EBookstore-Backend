@@ -34,6 +34,6 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
      * @throws IllegalArgumentException if either {@literal limit} or
      *                                  {@literal offset} is {@literal null}.
      */
-    @Query(value = "select id, author, date, description, isbn, pic_id, 100*price as price, title, uuid from `book` limit ?1 offset ?2", nativeQuery = true)
+    @Query(value = "select id, author, date, description, isbn, pic_id, 100*price as price, title, uuid, stock from `book` limit ?1 offset ?2", nativeQuery = true)
     List<Book> findWithLimitWithOffset(Integer limit, Integer offset);
 }

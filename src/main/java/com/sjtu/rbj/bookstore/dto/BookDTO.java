@@ -24,22 +24,23 @@ public class BookDTO {
     private String author;
     private Date date;
     private String isbn;
+    private Integer stock;
     private String description;
 
     /**
      * Package the book entity into book data.
+     *
      * @param book
      * @return book data which can be returned to front-end.
      */
     public static BookDTO from(Book book) {
-        return new BookDTO(book.getUuid(),
-                book.getTitle(), book.getPicId(),
-                PriceHandler.from(book.getPriceCent()).toString(),
-                book.getAuthor(), book.getDate(), book.getIsbn(), book.getDescription());
+        return new BookDTO(book.getUuid(), book.getTitle(), book.getPicId(),
+                PriceHandler.from(book.getPriceCent()).toString(), book.getAuthor(), book.getDate(),
+                book.getIsbn(), book.getDescription(), book.getStock());
     }
 
-    public BookDTO(UUID uuid, String title, String picId, String price, String author, Date date, String isbn,
-            String description) {
+    public BookDTO(UUID uuid, String title, String picId, String price, String author, Date date,
+            String isbn, String description, Integer stock) {
         this.uuid = uuid;
         this.title = title;
         this.picId = picId;
@@ -48,5 +49,6 @@ public class BookDTO {
         this.date = date;
         this.isbn = isbn;
         this.description = description;
+        this.stock = stock;
     }
 }

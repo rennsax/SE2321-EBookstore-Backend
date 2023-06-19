@@ -56,6 +56,8 @@ public class Book implements Serializable {
 
     private String author;
 
+    private Integer stock;
+
     @Column(columnDefinition = "DATE")
     private Date date;
 

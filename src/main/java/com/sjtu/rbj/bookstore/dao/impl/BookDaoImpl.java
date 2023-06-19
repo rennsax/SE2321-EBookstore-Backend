@@ -35,4 +35,9 @@ public class BookDaoImpl implements BookDao {
         return bookRepository.findById(id);
     }
 
+    @Override
+    public List<Book> findAll() {
+        return bookRepository.findAll();
+    }
+
 }

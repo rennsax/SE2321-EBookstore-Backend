@@ -39,4 +39,11 @@ public interface BookDao {
 	 * @throws IllegalArgumentException if {@literal id} is {@literal null}.
 	 */
     Optional<Book> findById(Integer id);
+
+    /**
+	 * Returns all instances of books.
+	 *
+	 * @return all entities
+	 */
+    List<Book> findAll();
 }

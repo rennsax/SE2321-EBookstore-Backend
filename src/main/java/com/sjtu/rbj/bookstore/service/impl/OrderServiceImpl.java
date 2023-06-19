@@ -46,7 +46,17 @@ public class OrderServiceImpl implements OrderService {
         Optional<Order> maybeOrder = orderDao.findById(orderId);
         Order order = maybeOrder.orElseThrow(() -> new NoSuchElementException());
         if (order.getState() != OrderState.PENDING) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Can't checkout an order that is not \"pending\"");
+        }
+        List<OrderItem> orderItemList = order.getOrderItemList();
+        // Check if the stock is enough
+        for (OrderItem orderItem: orderItemList) {
+            Book book = orderItem.getBook();
+            Integer afterStock = book.getStock() - orderItem.getQuantity();
+            if (afterStock < 0) {
+                throw new UnsupportedOperationException("Stock not enough: " + book.getTitle());
+            }
+            book.setStock(afterStock);
         }
         order.setState(OrderState.TRANSPORTING);
         order.setTime(Timestamp.from(Instant.now()));

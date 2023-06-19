@@ -7,8 +7,10 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sjtu.rbj.bookstore.dao.BookDao;
+import com.sjtu.rbj.bookstore.dto.BookDTO;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.service.BookService;
 
@@ -42,6 +44,22 @@ public class BookServiceImpl implements BookService {
         limit = Math.min(20, limit);
         List<Book> bookList = bookDao.findWithLimitWithOffset(limit, offset);
         return bookList;
+    }
+
+    @Override
+    public List<Book> getAllBooks() {
+        return bookDao.findAll();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateBook(BookDTO bookDTO) {
+        Optional<Book> maybeBook = bookDao.findByUuid(bookDTO.getUuid());
+        Book book = maybeBook.orElseThrow(() -> new NoSuchElementException("Can't find such book!"));
+        book.setTitle(bookDTO.getTitle());
+        book.setAuthor(bookDTO.getAuthor());
+        book.setIsbn(bookDTO.getIsbn());
+        book.setStock(bookDTO.getStock());
     }
 
 }
