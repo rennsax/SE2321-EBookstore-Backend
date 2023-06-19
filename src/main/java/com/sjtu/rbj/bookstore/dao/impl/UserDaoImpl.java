@@ -46,4 +46,9 @@ public class UserDaoImpl implements UserDao {
         return repository.findById(id);
     }
 
+    @Override
+    public <S extends User> S save(S entity) {
+        return repository.save(entity);
+    }
+
 }

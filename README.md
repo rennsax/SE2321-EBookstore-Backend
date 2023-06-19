@@ -40,20 +40,25 @@
   type LoginInfo = {
     account: string;
     passwd: string;
-  }
+  };
   ```
+
   返回两种 status code: 200 (OK) or 401 (Unauthorized)。
   返回 OK 时，response body 包含当前用户类型：
 
   ```typescript
   type LoginResponseBody = {
     type: "SUPER" | "FORBIDDEN" | "NORMAL";
-  }
+  };
   ```
 
 ### 用户信息 `/user`
 
 暂时没有固定，等到后期加入了安全相关功能后再确定。
+
+- PUT `/users`: 创建新用户，request body 须提供 account 和 passwd 字段。可能的两种 status: No Content, Conflict.
+
+- PATCH `/users/{userId}`: 更新用户信息（目前只更新名字），返回 No Content 响应状态（目前没有做异常处理）。
 
 ### 书籍操作 `/books`
 

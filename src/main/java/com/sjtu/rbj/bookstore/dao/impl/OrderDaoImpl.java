@@ -34,4 +34,9 @@ public class OrderDaoImpl implements OrderDao {
         return orderRepository.findById(id);
     }
 
+    @Override
+    public void flush() {
+        orderRepository.flush();
+    }
+
 }

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,6 +117,36 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         userAccount.setPasswd(newPasswd);
+        return true;
+    }
+
+    @Override
+    public Boolean addUser(String account, String passwd) {
+        try {
+            userDao.save(new User(account, passwd));
+        } catch (DataIntegrityViolationException e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void changeUserName(Integer id, String newName) {
+        Optional<User> maybeUser = userDao.findById(id);
+        User user = maybeUser.orElseThrow(() -> new NoSuchElementException("No such user!"));
+        user.setName(newName);
+    }
+
+    @Override
+    public Boolean addUser(String userName, String account, String passwd) {
+        User user = new User(account, passwd);
+        user.setName(userName);
+        try {
+            userDao.save(user);
+        } catch (DataIntegrityViolationException e) {
+            return false;
+        }
         return true;
     }
 }

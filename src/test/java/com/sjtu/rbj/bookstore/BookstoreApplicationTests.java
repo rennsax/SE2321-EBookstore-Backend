@@ -25,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.sjtu.rbj.bookstore.controller.LoginController;
 import com.sjtu.rbj.bookstore.controller.UserController;
 import com.sjtu.rbj.bookstore.dao.BookDao;
@@ -93,6 +92,13 @@ class BookstoreApplicationTests {
         assertFalse(userService.login("cauchy@gmail.com", "123456").isPresent());
         assertTrue(userService.login("cauchy@gmail.com", "hello").isPresent());
         assertFalse(userService.changePasswdByAccount("bob@outlook.com", "abcdef"));
+        assertTrue(userService.addUser("test@163.com", "test123"));
+        assertDoesNotThrow(() -> {
+            userService.changeUserName(3, "Juliet");
+        });
+        userDao.flush();
+        assertEquals("Juliet", userService.getAllUsers().get(2).getName());
+        assertFalse(userService.addUser("test@163.com", "test123"));
     }
 
     /**
@@ -247,13 +253,6 @@ class BookstoreApplicationTests {
         Map<String, String> expectBody = new HashMap<>(1);
         expectBody.put("userType", "SUPER");
         assertEquals(expectBody, response.getBody());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    void testUserController() {
-
     }
 
 }

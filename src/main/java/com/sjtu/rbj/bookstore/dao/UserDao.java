@@ -51,4 +51,17 @@ public interface UserDao {
 	 * Flushes all pending changes to the database.
 	 */
 	void flush();
+
+	/**
+	 * Saves a given entity. Use the returned instance for further operations as the save operation might have changed the
+	 * entity instance completely.
+	 *
+	 * @param entity must not be {@literal null}.
+	 * @return the saved entity; will never be {@literal null}.
+	 * @throws IllegalArgumentException in case the given {@literal entity} is {@literal null}.
+	 * @throws OptimisticLockingFailureException when the entity uses optimistic locking and has a version attribute with
+	 *           a different value from that found in the persistence store. Also thrown if the entity is assumed to be
+	 *           present but does not exist in the database.
+	 */
+    <S extends User> S save(S entity);
 }

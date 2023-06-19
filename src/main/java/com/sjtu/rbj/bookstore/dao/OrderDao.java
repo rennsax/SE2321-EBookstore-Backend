@@ -42,4 +42,9 @@ public interface OrderDao {
 	 * @throws IllegalArgumentException if {@literal id} is {@literal null}.
 	 */
     Optional<Order> findById(Integer id);
+
+	/**
+	 * Flushes all pending changes to the database.
+	 */
+	void flush();
 }

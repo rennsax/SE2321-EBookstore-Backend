@@ -52,7 +52,7 @@ public class User {
     @Column(name = "user_type", nullable = false)
     private UserType userType = UserType.NORMAL;
 
-    private String name;
+    private String name = "Default User";
 
     @Column(name = "avatar_id", columnDefinition = "CHAR(15)", nullable = false)
     @ColumnDefault("'default_user'")
@@ -63,6 +63,12 @@ public class User {
     @Embedded
     private UserAccount userAccount = new UserAccount();
 
+    /**
+     * Create an user entity with the account and password,
+     * leave the primary key null, with default user type {@literal normal}
+     * @param account
+     * @param passwd
+     */
     public User(String account, String passwd) {
         this.userAccount.setAccount(account);
         this.userAccount.setPasswd(passwd);

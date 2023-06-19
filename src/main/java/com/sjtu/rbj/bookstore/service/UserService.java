@@ -79,4 +79,30 @@ public interface UserService {
      * @throws NoSuchElementException if the user doesn't exist.
      */
     Boolean changePasswdById(Integer id, String newPasswd);
+
+    /**
+     * Add an user, typically for register.
+     * @param account
+     * @param passwd
+     * @return true on success, false indicate an account conflict happens.
+     */
+    Boolean addUser(String account, String passwd);
+
+    /**
+     * Add an user, typically for register.
+     * @param userName
+     * @param account
+     * @param passwd
+     * @return true on success, false indicate an account conflict happens.
+     */
+    Boolean addUser(String userName, String account, String passwd);
+
+    /**
+     * Change the user's name.
+     * @param id must not be {@literal null}.
+     * @param newName
+     * @throws IllegalArgumentException if {@literal id} is {@literal null}.
+     * @throws NoSuchElementException if the user doesn't exist.
+     */
+    void changeUserName(Integer id, String newName);
 }

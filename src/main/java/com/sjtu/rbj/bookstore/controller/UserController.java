@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sjtu.rbj.bookstore.annotation.Administer;
 import com.sjtu.rbj.bookstore.constant.Constants;
+import com.sjtu.rbj.bookstore.dto.ApiErrorResponse;
 import com.sjtu.rbj.bookstore.dto.UserForAdminDTO;
 import com.sjtu.rbj.bookstore.dto.UserInfoDTO;
 import com.sjtu.rbj.bookstore.entity.User;
@@ -50,6 +52,26 @@ public class UserController {
     public UserInfoDTO getUserInfoByAccount(
             @RequestParam(value = "account", defaultValue = "") String account) {
         return userService.getUserInfoByAccount(account);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> addUser(@RequestBody Map<String, String> params) {
+        String userName = params.get("userName");
+        String account = params.get("account");
+        String passwd = params.get("passwd");
+        if (userService.addUser(userName, account, passwd)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiErrorResponse.builder()
+                .errorCode("A0111").errorMessage("The account already exists!").build());
+    }
+
+    @PatchMapping("/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateUserInfo(@PathVariable("userId") Integer userId,
+            @RequestBody Map<String, String> params) {
+        String newName = params.get("name");
+        userService.changeUserName(userId, newName);
     }
 
     @Administer
