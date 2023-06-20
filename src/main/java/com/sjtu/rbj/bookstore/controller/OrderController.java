@@ -19,6 +19,7 @@ import com.sjtu.rbj.bookstore.constant.Constants;
 import com.sjtu.rbj.bookstore.dto.BookOrdered;
 import com.sjtu.rbj.bookstore.dto.OrderInfoDTO;
 import com.sjtu.rbj.bookstore.entity.Order;
+import com.sjtu.rbj.bookstore.exception.IncompleteRequestBodyException;
 import com.sjtu.rbj.bookstore.service.OrderService;
 
 import lombok.AllArgsConstructor;

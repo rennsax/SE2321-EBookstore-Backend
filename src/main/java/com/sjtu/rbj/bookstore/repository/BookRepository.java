@@ -36,4 +36,10 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
      */
     @Query(value = "select id, author, date, description, isbn, pic_id, 100*price as price, title, uuid, stock from `book` limit ?1 offset ?2", nativeQuery = true)
     List<Book> findWithLimitWithOffset(Integer limit, Integer offset);
+
+    /**
+     * Delete a book entity by its uuid.
+     * @param uuid
+     */
+    void deleteByUuid(UUID uuid);
 }

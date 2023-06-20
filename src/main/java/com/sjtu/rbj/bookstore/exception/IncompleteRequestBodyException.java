@@ -1,4 +1,4 @@
-package com.sjtu.rbj.bookstore.controller;
+package com.sjtu.rbj.bookstore.exception;
 
 import org.springframework.core.NestedRuntimeException;
 

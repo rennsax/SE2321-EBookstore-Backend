@@ -46,4 +46,11 @@ public interface BookDao {
 	 * @return all entities
 	 */
     List<Book> findAll();
+
+
+    /**
+     * Delete a book by its uuid.
+     * @param uuid
+     */
+    void deleteByUuid(UUID uuid);
 }

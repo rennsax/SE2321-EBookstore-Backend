@@ -50,4 +50,11 @@ public interface BookService {
      * @param bookDTO
      */
     void updateBook(BookDTO bookDTO);
+
+
+    /**
+     * Delete the book from database.
+     * @param uuid
+     */
+    void deleteBookByUuid(UUID uuid);
 }

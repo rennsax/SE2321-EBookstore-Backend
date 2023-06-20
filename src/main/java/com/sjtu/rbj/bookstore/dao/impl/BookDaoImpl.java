@@ -40,4 +40,8 @@ public class BookDaoImpl implements BookDao {
         return bookRepository.findAll();
     }
 
+    public void deleteByUuid(UUID uuid) {
+        bookRepository.deleteByUuid(uuid);
+    }
+
 }

@@ -60,6 +60,13 @@ public class BookServiceImpl implements BookService {
         book.setAuthor(bookDTO.getAuthor());
         book.setIsbn(bookDTO.getIsbn());
         book.setStock(bookDTO.getStock());
+        book.setPicId(bookDTO.getPicId());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteBookByUuid(UUID uuid) {
+        bookDao.deleteByUuid(uuid);
     }
 
 }

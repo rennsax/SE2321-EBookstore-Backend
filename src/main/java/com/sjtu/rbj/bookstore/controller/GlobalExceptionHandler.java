@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.sjtu.rbj.bookstore.dto.ApiErrorResponse;
+import com.sjtu.rbj.bookstore.exception.IncompleteRequestBodyException;
 
 /**
  * @author Bojun Ren
