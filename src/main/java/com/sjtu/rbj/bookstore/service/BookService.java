@@ -57,4 +57,22 @@ public interface BookService {
      * @param uuid
      */
     void deleteBookByUuid(UUID uuid);
+
+
+    /**
+     * Find books by title, case insensitive.
+     * @param keyword
+     * @return
+     */
+    List<Book> findBookByTitle(String keyword);
+
+
+    /**
+     * Add a book entity.
+     * You shall at least provide title field of {@literal Book}.
+     *
+     * @param book
+     * @return the managed book entity.
+     */
+    Book addBook(Book book);
 }

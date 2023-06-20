@@ -39,4 +39,9 @@ public class OrderDaoImpl implements OrderDao {
         orderRepository.flush();
     }
 
+    @Override
+    public List<Order> findAll() {
+        return orderRepository.findAll();
+    }
+
 }

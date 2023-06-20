@@ -42,4 +42,11 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
      * @param uuid
      */
     void deleteByUuid(UUID uuid);
+
+    /**
+     * Search by the book title.
+     * @param like
+     * @return results.
+     */
+    List<Book> findByTitleLike(String like);
 }

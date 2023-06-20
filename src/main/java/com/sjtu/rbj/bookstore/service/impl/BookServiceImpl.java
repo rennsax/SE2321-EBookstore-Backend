@@ -24,11 +24,11 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private BookDao bookDao;
 
-
     @Override
     public Book getBookByUuid(UUID uuid) {
         Optional<Book> maybeBook = bookDao.findByUuid(uuid);
-        Book book = maybeBook.orElseThrow(() -> new NoSuchElementException("cannot find such book!"));
+        Book book = maybeBook
+                .orElseThrow(() -> new NoSuchElementException("cannot find such book!"));
         return book;
     }
 
@@ -55,7 +55,8 @@ public class BookServiceImpl implements BookService {
     @Transactional(rollbackFor = Exception.class)
     public void updateBook(BookDTO bookDTO) {
         Optional<Book> maybeBook = bookDao.findByUuid(bookDTO.getUuid());
-        Book book = maybeBook.orElseThrow(() -> new NoSuchElementException("Can't find such book!"));
+        Book book = maybeBook
+                .orElseThrow(() -> new NoSuchElementException("Can't find such book!"));
         book.setTitle(bookDTO.getTitle());
         book.setAuthor(bookDTO.getAuthor());
         book.setIsbn(bookDTO.getIsbn());
@@ -67,6 +68,16 @@ public class BookServiceImpl implements BookService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteBookByUuid(UUID uuid) {
         bookDao.deleteByUuid(uuid);
+    }
+
+    @Override
+    public List<Book> findBookByTitle(String keyword) {
+        return bookDao.findByTitleLike("%" + keyword + "%");
+    }
+
+    @Override
+    public Book addBook(Book book) {
+        return bookDao.save(book);
     }
 
 }

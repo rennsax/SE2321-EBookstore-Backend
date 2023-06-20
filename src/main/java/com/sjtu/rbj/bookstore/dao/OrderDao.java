@@ -47,4 +47,11 @@ public interface OrderDao {
 	 * Flushes all pending changes to the database.
 	 */
 	void flush();
+
+
+    /**
+     * Find all entities.
+     * @return list of all entities.
+     */
+    List<Order> findAll();
 }

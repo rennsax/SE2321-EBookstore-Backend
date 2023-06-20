@@ -38,10 +38,21 @@ public interface OrderService {
      * Get all orders by user id (except the "pending" order).
      *
      * @param userId must not be {@literal null}.
-     * @return all orders (except a "pending" order) belonging to the user, packed as {@code OrderInfo}
+     * @return all orders (except a "pending" order) belonging to the user.
 	 * @throws IllegalArgumentException if {@literal userId} is {@literal null}.
      */
     List<Order> getOrderByUserId(Integer userId);
+
+    /**
+     * Get all orders by user id (except the "pending" order).
+     * The returned orders must contain book with the specified keyword.
+     *
+     * @param userId must not be {@literal null}.
+     * @param keyword must not be {@literal null}.
+     * @return all orders (except a "pending" order) satisfying the conditions.
+	 * @throws IllegalArgumentException if {@literal userId} is {@literal null}.
+     */
+    List<Order> getOrderByUserId(Integer userId, String keyword);
 
     /**
      * Update the ordered item(s). Only "pending" orders' items can be updated.
@@ -59,4 +70,18 @@ public interface OrderService {
      * @throws UnsupportedOperationException if the target order isn't "pending".
      */
     Boolean updateOrder(Integer orderId, UUID uuid, Integer quantity);
+
+
+    /**
+     * Get all orders (not pending).
+     * @return list of orders.
+     */
+    List<Order> getAllOrders();
+
+    /**
+     * Get all orders (not pending, and contains the keyword).
+     * @param keyword must not be {@literal null}.
+     * @return lists of orders.
+     */
+    List<Order> getAllOrders(String keyword);
 }

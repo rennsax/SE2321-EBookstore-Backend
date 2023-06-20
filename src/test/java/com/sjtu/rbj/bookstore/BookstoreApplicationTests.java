@@ -108,7 +108,7 @@ class BookstoreApplicationTests {
     @Transactional(readOnly = true)
     void testEntities() {
         /** `book` table (initial data from "data-mysql.sql") */
-        long bookCount = bookRepository.count();
+        Long bookCount = bookRepository.count();
         assertEquals(46, bookCount, "books count error!");
 
         /** `user` table */
@@ -253,6 +253,12 @@ class BookstoreApplicationTests {
         Map<String, String> expectBody = new HashMap<>(1);
         expectBody.put("userType", "SUPER");
         assertEquals(expectBody, response.getBody());
+    }
+
+    @Test
+    void testBookSearch() {
+        List<Book> bookList = bookRepository.findByTitleLike("%python%");
+        assertEquals(5, bookList.size());
     }
 
 }

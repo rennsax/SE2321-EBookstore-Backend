@@ -40,8 +40,19 @@ public class BookDaoImpl implements BookDao {
         return bookRepository.findAll();
     }
 
+    @Override
     public void deleteByUuid(UUID uuid) {
         bookRepository.deleteByUuid(uuid);
+    }
+
+    @Override
+    public List<Book> findByTitleLike(String like) {
+        return bookRepository.findByTitleLike(like);
+    }
+
+    @Override
+    public <S extends Book> S save(S entity) {
+        return bookRepository.save(entity);
     }
 
 }

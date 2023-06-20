@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,11 +47,12 @@ public class OrderServiceImpl implements OrderService {
         Optional<Order> maybeOrder = orderDao.findById(orderId);
         Order order = maybeOrder.orElseThrow(() -> new NoSuchElementException());
         if (order.getState() != OrderState.PENDING) {
-            throw new UnsupportedOperationException("Can't checkout an order that is not \"pending\"");
+            throw new UnsupportedOperationException(
+                    "Can't checkout an order that is not \"pending\"");
         }
         List<OrderItem> orderItemList = order.getOrderItemList();
         // Check if the stock is enough
-        for (OrderItem orderItem: orderItemList) {
+        for (OrderItem orderItem : orderItemList) {
             Book book = orderItem.getBook();
             Integer afterStock = book.getStock() - orderItem.getQuantity();
             if (afterStock < 0) {
@@ -128,5 +130,43 @@ public class OrderServiceImpl implements OrderService {
         targetOrderItem.setQuantity(afterQuantity);
         return true;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Order> getOrderByUserId(Integer userId, String keyword) {
+        List<Order> orderList = getOrderByUserId(userId);
+        filterByKeyword(orderList, keyword);
+        return orderList;
+    }
+
+    @Override
+    public List<Order> getAllOrders() {
+        List<Order> orderList = orderDao.findAll();
+        orderList.removeIf(order -> order.getState() == OrderState.PENDING);
+        return orderList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Order> getAllOrders(String keyword) {
+        List<Order> orderList = this.getAllOrders();
+        filterByKeyword(orderList, keyword);
+        return orderList;
+    }
+
+    private void filterByKeyword(List<Order> orderList, String keyword) {
+        orderList.removeIf(order -> {
+            List<OrderItem> orderItemList = order.getOrderItemList();
+            for (OrderItem orderItem : orderItemList) {
+                // Regex match, insensitively
+                if (Pattern.compile(Pattern.quote(keyword), Pattern.CASE_INSENSITIVE)
+                        .matcher(orderItem.getBook().getTitle()).find()) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
 
 }

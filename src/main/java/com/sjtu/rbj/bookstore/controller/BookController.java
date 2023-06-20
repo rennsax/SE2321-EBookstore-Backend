@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,10 +39,23 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin(Constants.ALLOW_ORIGIN)
 public class BookController {
 
+    @PutMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addBook(@RequestBody Book book) {
+        bookService.addBook(book);
+    }
+
     @GetMapping
     public List<BookDTO> getBookListForHomePage(@RequestParam(defaultValue = "4") Integer limit,
-            @RequestParam(defaultValue = "0") Integer offset) {
-        List<Book> bookList = bookService.getBookDataListForHomePage(limit, offset);
+            @RequestParam(defaultValue = "0") Integer offset,
+            @RequestParam(value = "s", required = false) String keyword) {
+
+        List<Book> bookList = null;
+        if (keyword == null) {
+            bookList = bookService.getBookDataListForHomePage(limit, offset);
+        } else {
+            bookList = bookService.findBookByTitle(keyword);
+        }
         List<BookDTO> bookDataList = new ArrayList<>();
         for (Book book : bookList) {
             bookDataList.add(BookDTO.from(book));

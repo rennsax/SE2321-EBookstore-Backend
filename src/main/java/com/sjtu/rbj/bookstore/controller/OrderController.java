@@ -1,6 +1,9 @@
 package com.sjtu.rbj.bookstore.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sjtu.rbj.bookstore.annotation.Administer;
 import com.sjtu.rbj.bookstore.constant.Constants;
 import com.sjtu.rbj.bookstore.dto.BookOrdered;
 import com.sjtu.rbj.bookstore.dto.OrderInfoDTO;
@@ -44,7 +48,8 @@ public class OrderController {
 
     /**
      * Handle the request to update an order, including add or delete some ordered
-     * books for the order. The request body should contains {@code uuid} and {@code quantity}.
+     * books for the order. The request body should contains {@code uuid} and
+     * {@code quantity}.
      */
     @PatchMapping("/{orderId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -79,12 +84,39 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<OrderInfoDTO> getAllOrderByUserId(@RequestParam("userId") Integer userId) {
-        List<Order> orderInfoList = orderService.getOrderByUserId(userId);
-        List<OrderInfoDTO> orderInfoDTOList = new ArrayList<>();
-        for (Order order : orderInfoList) {
-            orderInfoDTOList.add(OrderInfoDTO.from(order));
+    public List<OrderInfoDTO> getAllOrderByUserId(@RequestParam("userId") Integer userId,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "beginDate", required = false) String beginDate,
+            @RequestParam(name = "endDate", required = false) String endDate)
+            throws ParseException {
+        List<Order> orderList = null;
+        if (keyword == null) {
+            orderList = orderService.getOrderByUserId(userId);
+        } else {
+            orderList = orderService.getOrderByUserId(userId, keyword);
         }
+        filterByBeginAndEnd(orderList, beginDate, endDate);
+        List<OrderInfoDTO> orderInfoDTOList = new ArrayList<>();
+        orderList.forEach(order -> orderInfoDTOList.add(OrderInfoDTO.from(order)));
+        return orderInfoDTOList;
+    }
+
+    @Administer
+    @GetMapping("/all")
+    public List<OrderInfoDTO> getAllOrders(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "beginDate", required = false) String beginDate,
+            @RequestParam(name = "endDate", required = false) String endDate)
+            throws ParseException {
+        List<Order> orderList = null;
+        if (keyword == null) {
+            orderList = orderService.getAllOrders();
+        } else {
+            orderList = orderService.getAllOrders(keyword);
+        }
+        filterByBeginAndEnd(orderList, beginDate, endDate);
+        List<OrderInfoDTO> orderInfoDTOList = new ArrayList<>();
+        orderList.forEach(order -> orderInfoDTOList.add(OrderInfoDTO.from(order)));
         return orderInfoDTOList;
     }
 
@@ -96,5 +128,18 @@ public class OrderController {
 
         public static final String OP_UPDATE = "update items";
         public static final String OP_CHECKOUT = "checkout";
+    }
+
+    private void filterByBeginAndEnd(List<Order> orderList, String beginDate, String endDate)
+            throws ParseException {
+        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (beginDate != null) {
+            Date date = parser.parse(beginDate + " 00:00:00");
+            orderList.removeIf(order -> date.getTime() > order.getTime().getTime());
+        }
+        if (endDate != null) {
+            Date date = parser.parse(endDate + " 23:59:59");
+            orderList.removeIf(order -> date.getTime() < order.getTime().getTime());
+        }
     }
 }
