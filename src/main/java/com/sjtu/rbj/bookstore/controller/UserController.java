@@ -1,5 +1,7 @@
 package com.sjtu.rbj.bookstore.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ import com.sjtu.rbj.bookstore.constant.Constants;
 import com.sjtu.rbj.bookstore.dto.ApiErrorResponse;
 import com.sjtu.rbj.bookstore.dto.UserForAdminDTO;
 import com.sjtu.rbj.bookstore.dto.UserInfoDTO;
+import com.sjtu.rbj.bookstore.dto.UserStatisticDTO;
 import com.sjtu.rbj.bookstore.entity.User;
 import com.sjtu.rbj.bookstore.entity.UserType;
 import com.sjtu.rbj.bookstore.service.UserService;
@@ -72,6 +75,23 @@ public class UserController {
             @RequestBody Map<String, String> params) {
         String newName = params.get("name");
         userService.changeUserName(userId, newName);
+    }
+
+    @GetMapping("/{userId}/stat")
+    public UserStatisticDTO getUserStatistic(@PathVariable("userId") Integer userId,
+            @RequestParam(name = "beginDate", required = false) String beginDate,
+            @RequestParam(name = "endDate", required = false) String endDate) throws ParseException {
+        if ((beginDate == null) ^ (endDate == null)) {
+            throw new UnsupportedOperationException("Don't provide beginDate/endDate alone!");
+        }
+        long beginTimestamp = 0;
+        long endTimestamp = Long.MAX_VALUE;
+        if (beginDate != null) {
+            SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            beginTimestamp = parser.parse(beginDate + " 00:00:00").getTime();
+            endTimestamp = parser.parse(endDate + " 23:59:59").getTime();
+        }
+        return userService.getUserStatistic(userId, beginTimestamp, endTimestamp);
     }
 
     @Administer

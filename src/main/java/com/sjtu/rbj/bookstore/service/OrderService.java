@@ -84,4 +84,14 @@ public interface OrderService {
      * @return lists of orders.
      */
     List<Order> getAllOrders(String keyword);
+
+    /**
+     * Filter orders by begin time and end time.
+     * @param orderList list to be filtered.
+     * @param beginTime begin time in unix timestamp
+     * @param endTime end time in unix timestamp
+     * @return order list after filtered.
+     */
+    @Deprecated
+    List<Order> filterByBeginAndEnd(List<Order> orderList, Long beginTime, Long endTime);
 }

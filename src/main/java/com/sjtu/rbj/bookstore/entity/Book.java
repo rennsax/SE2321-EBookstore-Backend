@@ -72,5 +72,37 @@ public class Book implements Serializable {
         if (uuid == null) {
             uuid = UUID.randomUUID();
         }
+        if (stock == null) {
+            stock = 100;
+        }
+        if (priceCent == null) {
+            priceCent = 100;
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+        Book other = ((Book)obj);
+        if (other.uuid == null) {
+            return false;
+        }
+        return other.uuid.equals(this.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        if (uuid == null) {
+            return 0;
+        }
+        return uuid.hashCode();
     }
 }

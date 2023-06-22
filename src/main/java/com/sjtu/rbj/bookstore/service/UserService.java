@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.sjtu.rbj.bookstore.dto.UserInfoDTO;
+import com.sjtu.rbj.bookstore.dto.UserStatisticDTO;
 import com.sjtu.rbj.bookstore.entity.User;
 import com.sjtu.rbj.bookstore.entity.UserType;
 
@@ -105,4 +106,13 @@ public interface UserService {
      * @throws NoSuchElementException if the user doesn't exist.
      */
     void changeUserName(Integer id, String newName);
+
+    /**
+     * Get statistic based on the time range.
+     * @param userId
+     * @param beginTimestamp
+     * @param endTimestamp
+     * @return
+     */
+    UserStatisticDTO getUserStatistic(Integer userId, Long beginTimestamp, Long endTimestamp);
 }

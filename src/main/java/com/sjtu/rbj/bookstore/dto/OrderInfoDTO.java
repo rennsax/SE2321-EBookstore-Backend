@@ -7,8 +7,8 @@ import java.util.List;
 import com.sjtu.rbj.bookstore.constant.Constants;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.entity.Order;
-import com.sjtu.rbj.bookstore.entity.OrderState;
 import com.sjtu.rbj.bookstore.entity.Order.OrderItem;
+import com.sjtu.rbj.bookstore.entity.OrderState;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 public class OrderInfoDTO {
 
     private Integer id;
+    private Integer userId;
     private OrderState state;
     private Timestamp time;
     private String sumBudget;
@@ -40,8 +41,8 @@ public class OrderInfoDTO {
             bookOrderedList.add(BookOrderedDTO.from(orderItem));
             sumBudget += totalBudget;
         }
-        return new OrderInfoDTO(order.getId() + Constants.ORDER_NUMBER_BIAS, order.getState(), order.getTime(),
-                PriceHandler.from(sumBudget).toString(),
-                bookOrderedList);
+        return new OrderInfoDTO(order.getId() + Constants.ORDER_NUMBER_BIAS,
+                order.getUser().getId(), order.getState(), order.getTime(),
+                PriceHandler.from(sumBudget).toString(), bookOrderedList);
     }
 }

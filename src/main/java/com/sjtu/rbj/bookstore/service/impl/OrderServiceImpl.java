@@ -18,8 +18,8 @@ import com.sjtu.rbj.bookstore.dao.OrderDao;
 import com.sjtu.rbj.bookstore.dto.OrderInfoDTO;
 import com.sjtu.rbj.bookstore.entity.Book;
 import com.sjtu.rbj.bookstore.entity.Order;
-import com.sjtu.rbj.bookstore.entity.OrderState;
 import com.sjtu.rbj.bookstore.entity.Order.OrderItem;
+import com.sjtu.rbj.bookstore.entity.OrderState;
 import com.sjtu.rbj.bookstore.service.OrderService;
 
 /**
@@ -168,5 +168,17 @@ public class OrderServiceImpl implements OrderService {
         });
     }
 
+    @Override
+    public List<Order> filterByBeginAndEnd(List<Order> orderList, Long beginTime, Long endTime) {
+        if (beginTime != null && endTime != null) {
+            orderList.removeIf(order -> beginTime > order.getTime().getTime()
+                    || endTime < order.getTime().getTime());
+        } else if (beginTime != null) {
+            orderList.removeIf(order -> beginTime > order.getTime().getTime());
+        } else if (endTime != null) {
+            orderList.removeIf(order -> endTime < order.getTime().getTime());
+        }
+        return orderList;
+    }
 
 }
