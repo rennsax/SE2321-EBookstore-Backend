@@ -115,3 +115,11 @@ URI `/orders` 是无效的（不允许直接获得数据库里的所有订单）
   ```
 
 - GET `?userId=...`：通过用户名主键获取用户的所有非 "pending" 状态订单，返回 `orderId` 的数组。
+
+
+## Roadmap
+
+由于迭代三四的赶工，现在的后端接口比较脆弱，主要问题有入参校验不足、异常处理不充分。还有一些接口设计出来单纯只是为了应付作业的需求，最后不一定会保留。这部分记录了一些未来的改动方向。
+
+- `BookController#addBook(Book book)`：检验 book 入参至少包含哪些字段。
+- `BookController#updateBook(BookDTO bookDTO)`: 也是检查至少包含的字段。

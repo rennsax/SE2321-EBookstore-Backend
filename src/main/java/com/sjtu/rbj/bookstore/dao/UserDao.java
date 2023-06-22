@@ -24,7 +24,6 @@ public interface UserDao {
      *
      * @param id must not be {@literal null}.
      * @return an {@code Optional} object may contain the user.
-     * @throws IllegalArgumentException if {@literal id} is {@literal null}.
      */
     Optional<User> findById(Integer id);
 
@@ -33,7 +32,6 @@ public interface UserDao {
      *
      * @param account must not be {@literal null}.
      * @return the entity with the given account or {@literal Optional#empty()} if none found.
-	 * @throws IllegalArgumentException if {@literal account} is {@literal null}.
      */
     Optional<User> findByAccount(String account);
 
@@ -43,7 +41,6 @@ public interface UserDao {
      * @param account must not be {@literal null}.
      * @param passwd must not be {@literal null}.
      * @return the entity with the given account or {@literal Optional#empty()} if none found.
-	 * @throws IllegalArgumentException if either {@literal account} or {@literal passwd} is {@literal null}.
      */
     Optional<User> findByAccountAndPasswd(String account, String passwd);
 
@@ -58,10 +55,6 @@ public interface UserDao {
 	 *
 	 * @param entity must not be {@literal null}.
 	 * @return the saved entity; will never be {@literal null}.
-	 * @throws IllegalArgumentException in case the given {@literal entity} is {@literal null}.
-	 * @throws OptimisticLockingFailureException when the entity uses optimistic locking and has a version attribute with
-	 *           a different value from that found in the persistence store. Also thrown if the entity is assumed to be
-	 *           present but does not exist in the database.
 	 */
     <S extends User> S save(S entity);
 }

@@ -39,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin(Constants.ALLOW_ORIGIN)
 public class BookController {
 
+    @Administer
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addBook(@RequestBody Book book) {
@@ -50,7 +51,7 @@ public class BookController {
             @RequestParam(defaultValue = "0") Integer offset,
             @RequestParam(value = "s", required = false) String keyword) {
 
-        List<Book> bookList = null;
+        List<Book> bookList;
         if (keyword == null) {
             bookList = bookService.getBookDataListForHomePage(limit, offset);
         } else {

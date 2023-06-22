@@ -15,6 +15,7 @@ public interface BookService {
 
     /**
      * Get book information for homepage, from the top of the database
+     *
      * @param limit the maximum number of books to get.
      *        Constraints: {@code 1 <= limit <= 20}. Otherwise, it's forced to be resized.
      * @return {@code List<Book>} with size no more than {@code limit}
@@ -35,7 +36,6 @@ public interface BookService {
      * @param uuid must not be {@literal null}.
      * @return the book entity.
      * @throws NoSuchElementException if a book cannot be found.
-     * @throws IllegalArgumentException if the given {@literal uuid} is {@literal null}
      */
     Book getBookByUuid(UUID uuid);
 
@@ -54,24 +54,24 @@ public interface BookService {
 
     /**
      * Delete the book from database.
-     * @param uuid
+     * @param uuid must not be {@literal null}.
+     * @throws NoSuchElementException if the book to be deleted can't be found.
      */
     void deleteBookByUuid(UUID uuid);
 
 
     /**
      * Find books by title, case insensitive.
-     * @param keyword
-     * @return
+     * @param keyword must not be {@literal null}.
+     * @return list of found results.
      */
     List<Book> findBookByTitle(String keyword);
 
 
     /**
      * Add a book entity.
-     * You shall at least provide title field of {@literal Book}.
      *
-     * @param book
+     * @param book the field {@literal title} must not be {@literal null}.
      * @return the managed book entity.
      */
     Book addBook(Book book);

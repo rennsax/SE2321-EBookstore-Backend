@@ -3,8 +3,6 @@ package com.sjtu.rbj.bookstore.dao;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.dao.OptimisticLockingFailureException;
-
 import com.sjtu.rbj.bookstore.entity.Order;
 
 /**
@@ -18,10 +16,6 @@ public interface OrderDao {
 	 *
 	 * @param entity must not be {@literal null}.
 	 * @return the saved entity; will never be {@literal null}.
-	 * @throws IllegalArgumentException in case the given {@literal entity} is {@literal null}.
-	 * @throws OptimisticLockingFailureException when the entity uses optimistic locking and has a version attribute with
-	 *           a different value from that found in the persistence store. Also thrown if the entity is assumed to be
-	 *           present but does not exist in the database.
 	 */
     <S extends Order> S save(S entity);
 
@@ -30,7 +24,6 @@ public interface OrderDao {
      *
      * @param userId must not be {@literal null}
      * @return all order entities belonging to the target user.
-	 * @throws IllegalArgumentException if {@literal userId} is {@literal null}.
      */
     List<Order> findByUserId(Integer userId);
 
@@ -39,7 +32,6 @@ public interface OrderDao {
 	 *
 	 * @param id must not be {@literal null}.
 	 * @return the entity with the given id or {@literal Optional#empty()} if none found.
-	 * @throws IllegalArgumentException if {@literal id} is {@literal null}.
 	 */
     Optional<Order> findById(Integer id);
 
