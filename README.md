@@ -1,3 +1,7 @@
+## Archived
+
+This version serves as the final release of SE2321 E-Bookstore backend. It's archived though, as I begin to refactor my project for SE3353. See further improvement at [the new repository](https://github.com/rennsax/SE3353-EBookstore-Server).
+
 ## Service 逻辑设计
 
 ### 基础逻辑
